@@ -1,0 +1,63 @@
+# Default set CSS styles (these go into the document header):
+plugin.tx_sksimplegallery_pi1._CSS_DEFAULT_STYLE (
+.tx-sksimplegallery-pi1 {
+	width:100%;
+}
+.tx-sksimplegallery-pi1 p.pagebrowser span {
+	padding:0 4px
+}
+.tx-sksimplegallery-pi1 dl.list {
+	float:left;
+	margin: 0 10px 10px 10px;
+	border: 1px solid #000;
+	background-color: #ececec;
+}
+.tx-sksimplegallery-pi1 dl.list dt {
+	border-bottom: 1px solid #000;
+	margin: 0;
+}
+.tx-sksimplegallery-pi1 dl.list dd {
+	
+	margin: 0;
+	padding: 3px;
+	font-size:12px;
+	height:40px;
+	text-align:center;
+	font-weight:bold;
+}
+
+.tx-sksimplegallery-pi1 dl.single {
+	float:left;
+	margin: 0 10px 10px 10px;
+	border: 1px solid #000;
+}
+.tx-sksimplegallery-pi1 dl img {
+    display:block;
+}
+.tx-sksimplegallery-pi1 dl.single dt {
+	border-bottom: 1px solid #000;
+	margin: 0;
+}
+.tx-sksimplegallery-pi1 dl.single dd {
+	background-color: #ececec;
+	margin: 0;
+	padding: 3px;
+	font-size:12px;
+	height:40px;
+	text-align:center;
+	font-weight:bold;
+}
+
+.tx-sksimplegallery-pi1 h3 {
+	margin:6px;
+}
+
+.tx-sksimplegallery-pi1 .description {
+	margin:6px 0 12px 0;
+	padding-bottom:4px;
+	border-bottom:1px solid #000;
+}
+.tx-sksimplegallery-pi1 br.clear {
+	clear:both;
+}
+)

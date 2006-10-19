@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for plugin &quot;tx_sksimplegallery_pi1&quot;</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="ff_view">View</label>
+			<label index="ff_view_input">View</label>
+			<label index="ff_view_input.list">Galleries</label>
+			<label index="ff_view_input.single">Single Gallery</label>
+			<label index="ff_view_input.template_file">Template File</label>
+			<label index="ff_view_input.gal_effects">Effects</label>
+            
+			<label index="ff_viewList">Gallery View</label>
+			<label index="ff_viewList.singlePID">Page for Single View</label>
+			<label index="ff_viewList.maxW">max. Width for Thumb</label>
+			<label index="ff_viewList.maxH">max. Height for Thumb</label>
+			<label index="ff_viewList.width">abs. Width for Thumb</label>
+			<label index="ff_viewList.height">abs. Height for Thumb</label>
+			
+			<label index="ff_viewSingle">Single View</label>
+			<label index="ff_viewSingle.clickmode">open Pictures direct in PopUp</label>
+			
+			<label index="ff_viewSingle.maxW">max. Width for Single Picture</label>
+			<label index="ff_viewSingle.maxH">max. Height for Single Picture</label>
+			<label index="ff_viewSingle.singleID">ID of Galery</label> 
+			<label index="back">Back</label>
+			<label index="submit_button_label">Click here to submit value</label>
+            
+            <label index="pi_list_browseresults_prev">&lt; Previous</label>
+			<label index="pi_list_browseresults_page">Page</label>
+			<label index="pi_list_browseresults_next">Next &gt;</label>
+            
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="ff_view">Ansicht</label>
+			<label index="ff_view_input">Ansicht</label>
+			<label index="ff_view_input.list">Galerien</label>
+			<label index="ff_view_input.single">Einzelgalerie</label>
+			<label index="ff_view_input.template_file">Template Datei</label>
+			<label index="ff_view_input.gal_effects">Effekte</label>
+            
+			<label index="ff_viewList">Galerie-Ansicht</label>
+			<label index="ff_viewList.singlePID">Seite für Einzelansicht</label>
+			<label index="ff_viewList.maxW">max. Breite der Thumbs</label>
+			<label index="ff_viewList.maxH">max. Höhe der Thumbs</label>
+			<label index="ff_viewList.width">abs. Breite der Thumbs</label>
+			<label index="ff_viewList.height">abs. Höhe der Thumbs</label>
+			
+			<label index="ff_viewSingle">Einzelansicht</label>
+			<label index="ff_viewSingle.clickmode">öffne Bilder direkt im PopUp</label>
+			
+			<label index="ff_viewSingle.maxW">max. Breite des Einzelbildes</label>
+			<label index="ff_viewSingle.maxH">max. Höhe des Einzelbildes</label>
+			<label index="ff_viewSingle.singleID">ID der Galerie</label>
+            
+			<label index="back">zurück</label>
+			<label index="submit_button_label">Click here to submit value</label>
+            
+            <label index="pi_list_browseresults_prev">&lt; zurück</label>
+			<label index="pi_list_browseresults_page">Seite</label>
+			<label index="pi_list_browseresults_next">Vor &gt;</label>
+            
+		</languageKey>
+	</data>
+</T3locallang>

@@ -1,0 +1,58 @@
+plugin.tx_sksimplegallery_pi1 {
+
+	###
+	# Enable features
+	
+  
+	
+	###
+	# Dimensions, widths, heights, pixels
+	listView {
+		file.maxH = 120
+		file.maxW = 120
+	}
+	thumbView {
+		file.maxH = 120
+		file.maxW = 120
+	}
+	singleView {
+		file.maxH =280
+		file.maxW =200
+		linkMode = 1
+	}
+
+  
+
+	###
+	# Files
+   templateFile = {$plugin.tx_sksimplegallery_pi1.file.templateFile}
+  
+  
+	###
+	# Links and targets
+
+  	singlePID = {$plugin.tx_sksimplegallery_pi1.singlePID}
+    thumbMode = {$plugin.tx_sksimplegallery_pi1.thumbMode}
+  	
+	# modify PopUp-Window
+	
+	popupBodyTag = <body bgColor="#004251" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+	captionWrap = <p style="color:#fff;font-family:Verdana;padding:12px;">|</p>
+	captionHeight = 100
+	
+	###
+	# Others
+    
+    # Pagebrowser
+	listPageRecords = 20
+    singlePageRecords = 20
+	
+
+	# Rendering of entries. re-use the RTE parseFunc configuration for normal
+	# content
+	general_stdWrap {
+		parseFunc < tt_content.text.20.parseFunc
+	}
+
+	
+}

@@ -1,0 +1,4 @@
+# cat=basic; type=text; label=enter predefined effects : label(pipe)parameter
+effectPresets = light sharpen|-sharpen 50|heavy sharpen|-sharpen 90|greyscale|-colorspace GRAY|add light noise|+noise Uniform|add strong noise|+noise Poisson|glass border|-radial-blur 5 
+
+                      

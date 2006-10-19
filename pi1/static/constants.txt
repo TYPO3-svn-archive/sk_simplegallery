@@ -1,0 +1,44 @@
+###
+# This are the default TS-constants for tx_sksimplegallery
+##
+
+plugin.tx_sksimplegallery_pi1 = USER
+plugin.tx_sksimplegallery_pi1 {
+
+	###
+	# Enable features
+	##
+
+	
+	
+	
+	###
+	# Dimensions, widths, heights, pixels
+	##
+	
+	
+	
+	###
+	# Files
+	##
+	
+	# cat=plugin.sk_simplegallery/file/1; type=file[html,htm,tmpl,txt]; label= Template File: HTML-template file for display of the gallery. See EXT:sk_simplegallery/pi1/template.html for an example
+  file.templateFile = EXT:sk_simplegallery/pi1/template.html
+	
+
+	
+	###
+	# Links and targets
+	##
+	
+	# cat=plugin.sk_simplegallery/links/1; type=int+; label= Page for Single View (singlePID): The PID of the page where your gallery pictures are shown.
+	singlePID = 0
+	# cat=plugin.sk_simplegallery/links/2; type=int+; label= Thumb Mode: The Mode for opening Thumbnails (0=display on page, 1=display as popUp 
+	thumbMode = 0
+		
+	###
+	# Others
+	##
+	
+	
+}

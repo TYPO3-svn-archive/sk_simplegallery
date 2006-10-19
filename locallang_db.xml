@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for database tables/fields belonging to extension 'sk_simplegallery'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="tx_sksimplegallery_pictures">Pictures</label>
+			<label index="tx_sksimplegallery_pictures.title">Title</label>
+			<label index="tx_sksimplegallery_pictures.description">Description</label>
+			<label index="tx_sksimplegallery_pictures.picture">Picture</label>
+			<label index="tx_sksimplegallery_galleries">Galleries</label>
+			<label index="tx_sksimplegallery_galleries.title">Title</label>
+			<label index="tx_sksimplegallery_galleries.description">Description</label>
+			<label index="tx_sksimplegallery_galleries.pictures">Pictures</label>
+			<label index="tx_sksimplegallery_galleries.galpicture">Gallery Picture</label>
+            <label index="tx_sksimplegallery_galleries.altgalpicture">Alternative Gallery Picture</label>
+			<label index="tt_content.list_type_pi1">Simple Gallery</label>
+			<label index="moduleFunction.tx_sksimplegallery_modfunc1">Simple Gallery Import</label>
+		</languageKey>
+        <languageKey index="de" type="array">
+			<label index="tx_sksimplegallery_pictures">Bilder</label>
+			<label index="tx_sksimplegallery_pictures.title">Titel</label>
+			<label index="tx_sksimplegallery_pictures.description">Beschreibung</label>
+			<label index="tx_sksimplegallery_pictures.picture">Bild</label>
+			<label index="tx_sksimplegallery_galleries">Galerien</label>
+			<label index="tx_sksimplegallery_galleries.title">Titel</label>
+			<label index="tx_sksimplegallery_galleries.description">Beschreibung</label>
+			<label index="tx_sksimplegallery_galleries.pictures">Bilder</label>
+			<label index="tx_sksimplegallery_galleries.galpicture">Anzeigebild für die Galerie</label>
+            <label index="tx_sksimplegallery_galleries.altgalpicture">Alternatives Anzeigebild für die Galerie</label>
+			<label index="tt_content.list_type_pi1">Simple Gallery</label>
+			<label index="moduleFunction.tx_sksimplegallery_modfunc1">Simple Gallery Import</label>
+		</languageKey>
+	</data>
+</T3locallang>
