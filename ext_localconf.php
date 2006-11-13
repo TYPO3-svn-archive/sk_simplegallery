@@ -46,4 +46,14 @@ t3lib_extMgm::addTypoScript($_EXTKEY,'editorcfg','
 
 
 t3lib_extMgm::addPItoST43($_EXTKEY,'pi1/class.tx_sksimplegallery_pi1.php','_pi1','list_type',1);
+
+$TYPO3_CONF_VARS['EXTCONF']['cms']['db_layout']['addTables']['tx_sksimplegallery_pictures'][0] = array(
+    'fList' => 'picture,title,description',
+    'icon' => TRUE
+);
+
+$TYPO3_CONF_VARS['EXTCONF']['cms']['db_layout']['addTables']['tx_sksimplegallery_galleries'][0] = array(
+    'fList' => 'title,description',
+    'icon' => TRUE
+);
 ?>
