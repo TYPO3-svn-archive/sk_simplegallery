@@ -65,7 +65,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		$this->conf['view'] = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'view_input', 'sVIEW');
 		#echo "VIEW: ".$this->conf['view'];
 		$templateFile = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'template_file', 'sVIEW');
-		if($$templateFile=='')
+		if($templateFile=='')
 			$this->conf['templateFile'] = $this->conf['templateFile']=='' ? 'typo3conf/ext/'.$this->extKey.'/pi1/template.html' : $this->conf['templateFile'];
 		else
 			$this->conf['templateFile'] =$templateFile;
@@ -108,7 +108,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			$this->conf['thumbView.']['file.']['height']=$tmp;
 		}
 		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'singleClickmode', 'sSingle');
-		if($tmp!='') $this->conf['thumbMode']=$tmp;
+		if($tmp==1) $this->conf['thumbMode']=$tmp;
 		
 		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'singlePic_maxW', 'sSingle');
 		if($tmp!='') $this->conf['singleView.']['file.']['maxW']=$tmp;
@@ -117,9 +117,11 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		
         $tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'singleID', 'sSingle');
 		if($tmp!='') $this->conf['singleView.']['singleID']=$tmp;
+        $tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'singleLayout', 'sSingle');
+		if($tmp!='') $this->conf['singleLayout']=$tmp;
         
-        
-        
+        //which layout ?
+        $this->conf['singleLayout']=intval($this->conf['singleLayout']);
         
         
         //pagebrowswer defaults
@@ -203,7 +205,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
     }
     
 	function SingleGallery() {
-		$template['total'] = $this->cObj->getSubpart($this->template,'###SINGLEVIEW###');
+		$template['total'] = $this->cObj->getSubpart($this->template,$this->conf['singleLayout']==0?'###SINGLEVIEW###':'###SINGLEVIEW1###');
 		$template['item'] = $this->cObj->getSubpart($template['total'],'###THUMBLIST###');
 		$template['single'] = $this->cObj->getSubpart($template['total'],'###SINGLEONE###');
 		$innercontent=$singlecontent=$cap='';
@@ -226,17 +228,19 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
         // initialize loop params
         $start=0;
         $end=$count;
-        // calculate Pagebrowser
-		if(intval($this->conf['singlePageRecords'])>0 && $count>intval($this->conf['singlePageRecords'])) {
-			$maxpages=ceil($count/intval($this->conf['singlePageRecords']));
-			$start=$page*$this->conf['singlePageRecords'];
-			$end=$start+$this->conf['singlePageRecords']>$count?$count:$start+$this->conf['singlePageRecords'];
-			$PB.='<p class="pagebrowser">'.$this->pi_getLL('pi_list_browseresults_page','Page').' ';
-			for($i=0;$i<$maxpages;$i++) {
-				$PB.=($i==$page ? '<span class="active">'.($i+1) : '<span><a href="'.$this->pi_linkTP_keepPIvars_url(array('page'=>$i),1,0,$GLOBALS['TSFE']->id).'">'.($i+1).'</a>').'</span>';
-			}
-			$PB.='</p>';
-		}
+        // calculate Pagebrowser  (only with $this->conf['singleLayout']==0)
+        if($this->conf['singleLayout']==0 || ($this->conf['singleLayout']==1 && !$this->piVars['single']) ) {
+		    if(intval($this->conf['singlePageRecords'])>0 && $count>intval($this->conf['singlePageRecords']) ) {
+			    $maxpages=ceil($count/intval($this->conf['singlePageRecords']));
+			    $start=$page*$this->conf['singlePageRecords'];
+			    $end=$start+$this->conf['singlePageRecords']>$count?$count:$start+$this->conf['singlePageRecords'];
+			    $PB.='<p class="pagebrowser">'.$this->pi_getLL('pi_list_browseresults_page','Page').' ';
+			    for($i=0;$i<$maxpages;$i++) {
+				    $PB.=($i==$page ? '<span class="active">'.($i+1) : '<span><a href="'.$this->pi_linkTP_keepPIvars_url(array('page'=>$i),1,0,$GLOBALS['TSFE']->id).'">'.($i+1).'</a>').'</span>';
+			    }
+			    $PB.='</p>';
+		    }
+        }
         
 		$this->caption='';
 		for($i=$start;$i<$end;$i++) {
@@ -258,49 +262,145 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			    $this->conf['thumbView.']['caption'] = $thumb['description'] ? strip_tags($thumb['description']) : $thumb[$this->config['popupAltDescriptionField']];
 			    $this->caption.=$thumb['title']."\n";
 			    
-                $exif = $this->getExifData($this->uploaddir.$thumb['picture']);
-                $markerArray['###EXIF###']=is_array($exif) ? $this->infoExifDiv($exif) : ''; 
-			    $markerArray['###THUMB###']=$this->ImageMarker($this->conf['thumbView.'],($this->cObj->data['tx_kjimagelightbox2_imagelightbox2']==1));
+                //retrieve EXIF Data
+                $markerArray['###EXIF###']='';
+                if(!$this->conf['donotreadEXIF']) {
+                    $exif = $this->getExifData($this->uploaddir.$thumb['picture']);
+                    $markerArray['###EXIF###']=is_array($exif) ? $this->cObj->stdWrap($this->infoExifDiv($exif),$this->conf['exifData.']) : ''; 
+                }
+			    $popup=$this->cObj->data['tx_kjimagelightbox2_imagelightbox2']==0?$this->conf['thumbMode']:0;
+                if($this->conf['singleLayout']==1) $popup=0;
+                $markerArray['###THUMB###']=$this->ImageMarker($this->conf['thumbView.'],$popup);
 			    $imginfo=$GLOBALS['TSFE']->lastImageInfo;
 			    $markerArray['###WIDTH###']='style="width:'.$imginfo[0].'px;"';
-			    if($this->cObj->data['tx_kjimagelightbox2_imagelightbox2']==0) {
-				    if($this->conf['thumbMode']==0) {
-					    $markerArray['###THUMB###']=$this->pi_linkTP_keepPIvars($markerArray['###THUMB###'],array('id'=>$this->piVars['id'],'backpid'=>$this->piVars['backpid'],'page'=>$this->piVars['page'],'single'=>$thumb['uid']),1,1,$GLOBALS["TSFE"]->id);
-				    }
+			    
+                if($this->cObj->data['tx_kjimagelightbox2_imagelightbox2']==0 && $popup==0) {
+				    $markerArray['###THUMB###']=$this->pi_linkTP_keepPIvars($markerArray['###THUMB###'],array('id'=>$this->piVars['id'],'backpid'=>$this->piVars['backpid'],'page'=>$this->piVars['page'],'single'=>$thumb['uid']),1,1,$GLOBALS["TSFE"]->id);
 			    }
+                
 			    $markerArray['###THUMBTITLE###']=$thumb['title'];
 			    $innercontent.=$this->cObj->substituteMarkerArrayCached($template['item'], $markerArray,array(),array());
-			    if($thumb_ids[$i]==$this->piVars['single']) $single=$thumb;
+                
+			    if($thumb_ids[$i]==$this->piVars['single']) {
+                    $single=$thumb;
+                    
+                    //change for Layout1, thx to Uwe Schmelzer
+                    
+                    //clear overview part of template
+                    $subpartArray['###OVERVIEW###']='';
+                    	// Store ID of prev/next image for later use
+						// as prev/next Link in single view.
+				      $single['linkToPreviousImage'] = '';
+				      $single['linkToNextImage'    ] = '';
+
+						if (($i-1) >= 0    ) {
+							// set Link to previous image
+							$link_param = array();
+							$link_param['id'		] = $this->piVars['id'];
+							$link_param['backpid'] = $this->piVars['backpid'];
+							$link_param['page'	] = $this->piVars['page'];
+							$link_param['single' ] = $thumb_ids[$i-1];
+						    $link_text  = $this->cObj->stdWrap($this->pi_getLL('pi_list_browseresults_prev'),$this->conf['linkTextPrevious.']);
+							
+							// link marker content
+					      $single['linkToPreviousPicture'] = $this->pi_linkTP_keepPIvars($link_text, $link_param, 1, 1, $GLOBALS["TSFE"]->id);
+
+							// counter info marker content
+					      $single['pictureXofY'          ] = '('. $link_param['single' ] .'/'. $end .')';
+
+						} else	{
+							// this is the first image
+							$link_text  = $this->cObj->stdWrap($this->pi_getLL('pi_list_browseresults_first'),$this->conf['linkTextFirst.']);
+							$single['linkToPreviousPicture'] = $link_text;
+						}
+						
+			    		if (($i+1) < $end) {
+							// set Link to next image
+							$link_param = array();
+							$link_param['id'		] = $this->piVars['id'];
+							$link_param['backpid'] = $this->piVars['backpid'];
+							$link_param['page'	] = $this->piVars['page'];
+							$link_param['single' ] = $thumb_ids[$i+1];
+
+							$link_text  = $this->cObj->stdWrap($this->pi_getLL('pi_list_browseresults_next'),$this->conf['linkTextNext.']); 
+							$single['linkToNextPicture'] = $this->pi_linkTP_keepPIvars($link_text, $link_param, 1, 1, $GLOBALS["TSFE"]->id);
+
+						} else	{
+							// this is the last image
+							$link_text  = $this->cObj->stdWrap($this->pi_getLL('pi_list_browseresults_last'),$this->conf['linkTextLast.']); 
+					        $single['linkToNextPicture'] = $link_text;
+						}
+
+
+						// marker: pictureXofY
+				      $single['NumberOfCurrentPicture'] = $i+1;
+				      $single['TotalNumberOfPictures' ] = $end;
+
+						// marker: set Link to the thumbnails page
+						$link_param = array();
+						$link_param['id'		] = $this->piVars['id'];
+						$link_param['backpid'] = $this->piVars['backpid'];
+						$link_param['page'	] = $this->piVars['page'];
+                        
+                        $link_text  = $this->cObj->stdWrap($this->pi_getLL('pi_list_browseresults_up'),$this->conf['linkTextIndex.']);
+						$single['linkToThumbnails'] = $this->pi_linkTP_keepPIvars($link_text, $link_param, 1, 1, $GLOBALS["TSFE"]->id);
+                }
 			}
 		}
 		
 		
 		$markerArray['###TITLE###']=$row['title'];
 		$markerArray['###DESCRIPTION###']=$this->pi_RTEcssText($row['description']);
+                
 		$markerArray['###BACKLINK###']=$this->piVars['backpid']>0 ? $this->pi_linkTP_keepPIvars($this->pi_getLL('back'),array(),1,1,$this->piVars['backpid']) : '';
 		$markerArray['###PAGEBROWSER###']=$PB; 
 		
-		
+		// Adds hook for processing of extra item markers
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'])) {
+			foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'] as $_classRef) {
+				$_procObj = & t3lib_div::getUserObj($_classRef);
+				$markerArray = $_procObj->extraSingleMarkerProcessor($markerArray, $thumb, $this);
+			}
+		}
+        
 		if(count($single)>0) {
 			$this->conf['singleView.']['file']=$this->uploaddir.$single['picture'];
 			$this->conf['singleView.']['params'] = $this->pi_classParam('image');
 			$this->conf['singleView.']['altText'] = $single['title'];
 			$this->conf['singleView.']['titleText'] = $single['title'];
 			$this->conf['singleView.']['description'] = $this->pi_RTEcssText($single['description']);
-			$markerArray['###SINGLEPICTURE###']=$this->ImageMarker($this->conf['singleView.']);
+            
+            
+            $markerArray['###SINGLEPICTURE###']=$this->ImageMarker($this->conf['singleView.'], $this->conf['thumbMode']);      
+            
+            
 			$markerArray['###SINGLETITLE###']=$single['title'];
 			$markerArray['###SINGLEDESCRIPTION###']=$this->pi_RTEcssText($single['description']);
 			$singlecontent.=$this->cObj->substituteMarkerArrayCached($template['single'], $markerArray,array(),$subpartArray);
-		}
+            
+            $markerArray['###SINGLE_LINK_TO_PREVIOUS_PICTURE###'] = $single['linkToPreviousPicture' ];
+			$markerArray['###SINGLE_LINK_TO_NEXT_PICTURE###'    ] = $single['linkToNextPicture'     ];
+			$markerArray['###SINGLE_LINK_TO_THUMBNAILS###'      ] = $single['linkToThumbnails'      ];
+
+			$markerArray['###SINGLE_NUMBER_OF_CURENT_PICTURE###'] = $single['NumberOfCurrentPicture'];
+			$markerArray['###SINGLE_TOTAL_NUMBER_OF_PICTURES###'] = $single['TotalNumberOfPictures' ];
+            
+            
+		} 
+            
 		
 		$subpartArray['###THUMBLIST###']=$innercontent;
 		$subpartArray['###SINGLEONE###']=$singlecontent;
+        
+        if($this->conf['singleLayout']==1 && !$this->piVars['single']) $subpartArray['###SINGLEPICTUREVIEW###']='';
+        
 		return $this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,array());
 		
 	}
 	
-	function ImageMarker($lconf,$nolinkwrap=false) {
-		if(!$nolinkwrap) {
+	function ImageMarker($lconf,$linkwrap=0) {
+		#t3lib_div::debug($linkwrap,'linkwrap');
+        if($linkwrap==1) {
 			if($this->cObj->data['tx_kjimagelightbox2_imagelightbox2']==0) {
 				if($this->conf['thumbMode']==1 || $lconf['linkMode']==1) {
 					$lconf['imageLinkWrap'] = '1';
@@ -353,21 +453,20 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 	}
     
     function infoExifDiv($exif) {
-        $d.='Date:'.$exif['make'].'<br />';
-        $d.='Model:'.$exif['model'].'<br />';
-        $d.='digitalZoom:'.$exif['digitalZoom'].'<br />';
-        $d.='exposureMode:'.$exif['exposureMode'].'<br />';
-        $d.='exposureTime:'.$exif['exposureTime'].'<br />';
-        $d.='flash:'.$exif['flash'].'<br />';
-        $d.='focalLength35mmFilm:'.$exif['focalLength35mmFilm'].'<br />';
-        $d.='iso:'.$exif['iso'].'<br />';
-        $d.='origX:'.$exif['origX'].'<br />';
-        $d.='origY:'.$exif['origY'].'<br />';
-        $d.='time:'.$exif['time'].'<br />';
-        $d.='whiteBalance:'.$exif['whiteBalance'].'<br />';
-        
-        if($exif['focalLength']) $d.='focalLength:'.$exif['focalLength'].'<br />';
-        if($exif['apertureF']) $d.='apertureF:'.$exif['apertureF'].'<br />';
+        if($exif['make']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_make'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['make'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['model']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_model'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['model'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['digitalZoom']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_digitalZoom'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['digitalZoom'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['exposureMode']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_exposureMode'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['exposureMode'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['exposureTime']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_exposureTime'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['exposureTime'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['flash']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_flash'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['flash'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['focalLength35mmFilm']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_focalLength35mmFilm'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['focalLength35mmFilm'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['iso']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_iso'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['iso'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['origX']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_origX'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['origX'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['origY']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_origY'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['origY'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['time']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_time'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['time'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['whiteBalance']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_whiteBalance'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['whiteBalance'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['focalLength']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_focalLength'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['focalLength'],$this->conf['exifData.']['data.']).'<br />';
+        if($exif['apertureF']) $d.=$this->cObj->stdWrap($this->pi_getLL('exif_apertureF'),$this->conf['exifData.']['label.']).$this->cObj->stdWrap($exif['apertureF'],$this->conf['exifData.']['data.']).'<br />';
         
         return $d;
     }

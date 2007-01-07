@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
 <T3DataStructure>
+  <meta>
+    <langDisable>1</langDisable>
+  </meta>
+  
   <sheets>
   <sVIEW>
   <ROOT>
@@ -118,7 +122,7 @@
 				<config>
 					<type>input</type>
 					<size>3</size>
-					<max>3</max>
+					<max>9</max>
 					<eval>trim</eval>
 				</config>
 			</TCEforms>
@@ -130,7 +134,7 @@
 				<config>
 					<type>input</type>
 					<size>3</size>
-					<max>3</max>
+					<max>9</max>
 					<eval>trim</eval>
 				</config>
 			</TCEforms>
@@ -180,7 +184,7 @@
 				<config>
 					<type>input</type>
 					<size>3</size>
-					<max>3</max>
+					<max>9</max>
 					<eval>trim</eval>
 				</config>
 			</TCEforms>
@@ -192,7 +196,7 @@
 				<config>
 					<type>input</type>
 					<size>3</size>
-					<max>3</max>
+					<max>9</max>
 					<eval>trim</eval>
 				</config>
 			</TCEforms>
@@ -232,6 +236,15 @@
 			</TCEforms>
 		  </singlePic_maxH>
 		  
+          <singleLayout>
+		  	<TCEforms>
+				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewSingle.singleLayout</label>
+				<config>
+					<type>check</type>
+				</config>
+			</TCEforms>
+		  </singleLayout>
+        
 		  <singleID>
 		  	<TCEforms>
 				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewSingle.singleID</label>

@@ -87,14 +87,14 @@ if (TYPO3_MODE=="BE")	$TBE_MODULES_EXT["xMOD_db_new_content_el"]["addElClasses"]
 if (TYPO3_MODE=="BE")    {
     include_once(t3lib_extMgm::extPath($_EXTKEY).'class.tx_sksimplegallery_effects.php'); 
     
-   /* t3lib_extMgm::insertModuleFunction(
+    t3lib_extMgm::insertModuleFunction(
         "web_func",        
         "tx_sksimplegallery_modfunc1",
         t3lib_extMgm::extPath($_EXTKEY)."modfunc1/class.tx_sksimplegallery_modfunc1.php",
         "LLL:EXT:sk_simplegallery/locallang_db.xml:moduleFunction.tx_sksimplegallery_modfunc1",
         "wiz"    
-    );*/
-    t3lib_extMgm::addModule("web","txsksimplegalleryM1","",t3lib_extMgm::extPath($_EXTKEY)."mod1/");    
+    );
+    #t3lib_extMgm::addModule("web","txsksimplegalleryM1","",t3lib_extMgm::extPath($_EXTKEY)."mod1/");    
     
 }
 

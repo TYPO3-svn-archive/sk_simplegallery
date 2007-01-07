@@ -21,7 +21,8 @@
 			<label index="ff_viewList.height">abs. Height for Thumb</label>
 			
 			<label index="ff_viewSingle">Single View</label>
-			<label index="ff_viewSingle.clickmode">open Pictures direct in PopUp</label>
+            <label index="ff_viewSingle.clickmode">open Pictures direct in PopUp</label>
+			<label index="ff_viewSingle.singleLayout">alternative Single Layout</label>
 			
 			<label index="ff_viewSingle.maxW">max. Width for Single Picture</label>
 			<label index="ff_viewSingle.maxH">max. Height for Single Picture</label>
@@ -32,6 +33,27 @@
             <label index="pi_list_browseresults_prev">&lt; Previous</label>
 			<label index="pi_list_browseresults_page">Page</label>
 			<label index="pi_list_browseresults_next">Next &gt;</label>
+            <label index="pi_list_browseresults_up">Overview</label> 
+            <label index="pi_list_browseresults_first">First Picture</label> 
+            <label index="pi_list_browseresults_last">Last Picture</label> 
+            
+            <!-- EXIF Labels -->
+            <label index="exif_make">Manufacturer</label> 
+            <label index="exif_model">Model</label> 
+            <label index="exif_digitalZoom">digital Zoom</label> 
+            <label index="exif_exposureMode">exposure Mode</label> 
+            <label index="exif_exposureTime">exposure Time</label> 
+            <label index="exif_flash">flash</label> 
+            <label index="exif_focalLength35mmFilm">focalLength35mmFilm</label> 
+            <label index="exif_iso">iso</label> 
+            <label index="exif_origX">origX</label> 
+            <label index="exif_origY">origY</label> 
+            <label index="exif_time">time</label> 
+            <label index="exif_whiteBalance">whiteBalance</label> 
+            <label index="exif_focalLength">focalLength</label> 
+            <label index="exif_apertureF">apertureF</label> 
+            
+            
             
 		</languageKey>
 		<languageKey index="de" type="array">
@@ -51,7 +73,8 @@
 			
 			<label index="ff_viewSingle">Einzelansicht</label>
 			<label index="ff_viewSingle.clickmode">öffne Bilder direkt im PopUp</label>
-			
+			<label index="ff_viewSingle.singleLayout">alternatives Einzelbildlayout</label>  
+            
 			<label index="ff_viewSingle.maxW">max. Breite des Einzelbildes</label>
 			<label index="ff_viewSingle.maxH">max. Höhe des Einzelbildes</label>
 			<label index="ff_viewSingle.singleID">ID der Galerie</label>
@@ -62,6 +85,26 @@
             <label index="pi_list_browseresults_prev">&lt; zurück</label>
 			<label index="pi_list_browseresults_page">Seite</label>
 			<label index="pi_list_browseresults_next">Vor &gt;</label>
+            <label index="pi_list_browseresults_up">Übersicht</label> 
+            <label index="pi_list_browseresults_first">erstes Bild</label> 
+            <label index="pi_list_browseresults_last">letztes Bild</label>
+            
+            <!-- EXIF Labels -->
+            <label index="exif_make">Hersteller</label> 
+            <label index="exif_model">Modell</label> 
+            <label index="exif_digitalZoom">digitaler Zoom</label> 
+            <label index="exif_exposureMode">Belichtungsmodus</label> 
+            <label index="exif_exposureTime">Belichtungszeit</label> 
+            <label index="exif_flash">Blitz</label> 
+            <label index="exif_focalLength35mmFilm">focalLength35mmFilm</label> 
+            <label index="exif_iso">ISO</label> 
+            <label index="exif_origX">Breite</label> 
+            <label index="exif_origY">Höhe</label> 
+            <label index="exif_time">Aufnahme am</label> 
+            <label index="exif_whiteBalance">Weissabgleich</label> 
+            <label index="exif_focalLength">Brennweite</label> 
+            <label index="exif_apertureF">Blende</label> 
+            
             
 		</languageKey>
 	</data>
