@@ -228,6 +228,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
         // initialize loop params
         $start=0;
         $end=$count;
+        
         // calculate Pagebrowser  (only with $this->conf['singleLayout']==0)
         if($this->conf['singleLayout']==0 || ($this->conf['singleLayout']==1 && !$this->piVars['single']) ) {
 		    if(intval($this->conf['singlePageRecords'])>0 && $count>intval($this->conf['singlePageRecords']) ) {
@@ -279,6 +280,14 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			    }
                 
 			    $markerArray['###THUMBTITLE###']=$thumb['title'];
+               
+                // Adds hook for processing of extra item markers
+		        if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'])) {
+			        foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'] as $_classRef) {
+				        $_procObj = & t3lib_div::getUserObj($_classRef);
+				        $markerArray = $_procObj->extraSingleMarkerProcessor($markerArray, $thumb, $this);
+			        }
+		        }
 			    $innercontent.=$this->cObj->substituteMarkerArrayCached($template['item'], $markerArray,array(),array());
                 
 			    if($thumb_ids[$i]==$this->piVars['single']) {
