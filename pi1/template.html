@@ -124,10 +124,10 @@ for work with sk_pagecomments you can add this Marker:
 ###############################################
 <!-- ###ECARD### start -->
 <p>:::###DATE###:::</p>
-<h3>eCard for ###TO###
+<h3>eCard for ###TO###</h3>
 <p>from ###FROM### (###FROMEMAIL###)</p>
 <p>###TITLE###</p>
-<p>###PICTURE### </p>
+<p class="ecard-picture">###PICTURE### </p>
 <p>###MESSAGE###</p>
 <!-- ###ECARD### end -->
 
@@ -177,8 +177,8 @@ for work with sk_pagecomments you can add this Marker:
 
 <!--###CAPTCHA### start -->
 <p>
-  <label for="captcha">###L_CAPTCHA###</label>
-  ###CAPTCHAINPUT### ###CAPTCHAPICTURE###
+  <label for="captcha">###L_CAPTCHA### ###CAPTCHAPICTURE###</label>
+  ###CAPTCHAINPUT### 
 </p>
 <!--###CAPTCHA### end -->
 
@@ -219,9 +219,12 @@ for work with sk_pagecomments you can add this Marker:
 <body>
 <p>Du hast eine Ecard von ###V_SENDER### bekommen:</p>
 <h1>###V_TITLE###</h1>
-<p>###V_MESSAGE###</p>
 <p>###PICTURE_URL###</p>
+<p>###V_MESSAGE###</p>
+<hr>
 <p>###LIFETIME###<br />###LINK###</p>
+<hr>
+<p><a href="http://www.sk-typo3.de">sk-typo3 - Alles rund um Typo3</a></p>
 </body>
 <!-- ###ECARDMAIL### end --> 
 
@@ -230,5 +233,5 @@ for work with sk_pagecomments you can add this Marker:
 ###############################################
 <!-- ###ECARDSUCCESS### start --> 
 <h3>Die Ecard wurde erfolgreich an ###V_RECIPIENT### versandt!</h3>
-
+<p>###BACKLINK### </p>
 <!-- ###ECARDSUCCESS### end --> 

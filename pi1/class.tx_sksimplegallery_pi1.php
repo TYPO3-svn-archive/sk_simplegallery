@@ -556,13 +556,11 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
             $markerArray['###L_TITLE###']=$this->pi_getLL('ecard_title');
             $markerArray['###L_MESSAGE###']=$this->pi_getLL('ecard_message');
             $markerArray['###L_SENDER###']=$this->pi_getLL('ecard_sender');
+            $markerArray['###L_CAPTCHA###']=$this->pi_getLL('captcha');
             
-            $markerArray['###BACKLINK###']='';
-            $markerArray['###BACKLINK###']='';
-            $markerArray['###BACKLINK###']='';
             
             #captcha
-            if (t3lib_extMgm::isLoaded('captcha') && $this->conf['useCaptcha'])	{
+            if (t3lib_extMgm::isLoaded('captcha') && $this->conf['eCards.']['useCaptcha'])	{
 	            $markerArray['###CAPTCHAINPUT###'] = '<input type="text" id="captcha" size=10 name="'.$this->prefixId.'[captchaResponse]" value="" />';
                 $markerArray['###CAPTCHAPICTURE###'] = '<img src="'.t3lib_extMgm::siteRelPath('captcha').'captcha/captcha.php" alt="" />';
             } else {
@@ -570,7 +568,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
             }
             
             #freecap
-            if (t3lib_extMgm::isLoaded('sr_freecap') && !$this->conf['useCaptcha'] && $this->conf['useFreecap']) {
+            if (t3lib_extMgm::isLoaded('sr_freecap') && !$this->conf['eCards.']['useCaptcha'] && $this->conf['eCards.']['useFreecap']) {
                 $markerArray = array_merge($markerArray, $this->freeCap->makeCaptcha());
                 $subpartArray['###CAPTCHA###'] = '';  
             } else {
@@ -609,9 +607,9 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
                 $link=t3lib_div::getIndpEnv('TYPO3_SITE_URL').$this->pi_getPageLink($this->conf['eCards.']['viewPID'],'',array($this->prefixId.'[ecard]'=>mysql_insert_id(),$this->prefixId.'[eckey]'=>$picNameString));
                 $markerArray['###LINK###']='<a href="'.$link.'">'.$link.'</a>';
                 if(intval($this->conf['eCards.']['lifeTime'])>0) {  
-                    $markerArray['###LINK###']=sprintf($this->pi_getLL('ecard_linkWithLifetime'),$this->conf['eCards.']['lifeTime']);
+                    $markerArray['###LIFETIME###']=sprintf($this->pi_getLL('ecard_linkWithLifetime'),$this->conf['eCards.']['lifeTime']);
                 } else {
-                    $markerArray['###LINK###']=$this->pi_getLL('ecard_linkWithoutLifetime');
+                    $markerArray['###LIFETIME###']=$this->pi_getLL('ecard_linkWithoutLifetime');
                 }
                 
                 #copy picture
@@ -654,7 +652,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
     
     function ecardLifetime() {
         if(intval($this->conf['eCards.']['lifeTime'])>0) {
-            $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_ecards','hidden=0 and deleted=0 and DATEDIFF(CURDATE(),FROM_UNIXTIME(crdate))>'.intval($this->conf['eCards.']['lifeTime']));
+            $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_ecards','hidden=0 and deleted=0 and UNIX_TIMESTAMP(SUBDATE(NOW(),INTERVAL '.intval($this->conf['eCards.']['lifeTime']).' DAY))>crdate');
             if($res) {
                 while($row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
                     #delete picture

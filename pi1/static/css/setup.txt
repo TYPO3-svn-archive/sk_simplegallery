@@ -81,20 +81,24 @@ plugin.tx_sksimplegallery_pi1._CSS_DEFAULT_STYLE (
 
 .tx-sksimplegallery-pi1 #eCardForm fieldset {
     padding:12px;
-    width:440px;
+    width:500px;
 }
 
 .tx-sksimplegallery-pi1 #eCardForm label {
     clear:both;
-    width:120px;
+    width:140px;
     float:left;
     border:none;
 }
 .tx-sksimplegallery-pi1 #eCardForm input, .tx-sksimplegallery-pi1 #eCardForm textarea {
-    width:260px;
+    width:320px;
     float:right;
 }
-.tx-sksimplegallery-pi1 #eCardForm img {
+.tx-sksimplegallery-pi1 #eCardForm textarea { 
+    height:160px;
+    margin-bottom:12px;
+}
+.tx-sksimplegallery-pi1 #eCardForm img, .tx-sksimplegallery-pi1 p.ecard-picture img{
    margin:12px 0;
    border:4px #ddd ridge;
 }
