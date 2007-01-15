@@ -22,7 +22,8 @@ plugin.tx_sksimplegallery_pi1 {
 	}
 
   
-
+   dateFormat = d.m.Y
+    
 	###
 	# Files
    templateFile = {$plugin.tx_sksimplegallery_pi1.file.templateFile}
@@ -65,6 +66,19 @@ plugin.tx_sksimplegallery_pi1 {
     #set to 1 if you want to use new Single Layout
     singleLayout=0
 
+    
+    #Configuration for eCards
+    activateEcards = 0
+    eCards {
+        viewPID =
+        storagePID =
+        senderMinChars = 3
+        recipientMinChars = 3
+        titleMinChars = 5
+        messageMinChars = 20
+        subject = You recieved a eCard from xxx.xxx.com
+    }
+    
 	# Rendering of entries. re-use the RTE parseFunc configuration for normal
 	# content
 	general_stdWrap {

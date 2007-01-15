@@ -69,3 +69,27 @@ CREATE TABLE tx_sksimplegallery_galleries (
 	PRIMARY KEY (uid),
 	KEY parent (pid)
 );
+
+
+CREATE TABLE tx_sksimplegallery_ecards (
+    uid int(11) NOT NULL auto_increment,
+    pid int(11) DEFAULT '0' NOT NULL,
+    tstamp int(11) DEFAULT '0' NOT NULL,
+    crdate int(11) DEFAULT '0' NOT NULL,
+    cruser_id int(11) DEFAULT '0' NOT NULL,
+    deleted tinyint(4) DEFAULT '0' NOT NULL,
+    hidden tinyint(4) DEFAULT '0' NOT NULL,
+    sender tinytext NOT NULL,
+    sendermail tinytext NOT NULL,
+    recipient tinytext NOT NULL,
+    recipientmail tinytext NOT NULL,
+    pic blob NOT NULL,
+    picSrc varchar(100) DEFAULT '' NOT NULL,
+    subject tinytext NOT NULL,
+    message text NOT NULL,
+    
+    PRIMARY KEY (uid),
+    KEY parent (pid)
+);
+
+

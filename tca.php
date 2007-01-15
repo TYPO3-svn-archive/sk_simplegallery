@@ -309,4 +309,92 @@ $TCA["tx_sksimplegallery_galleries"] = Array (
 		"1" => Array("showitem" => "starttime, endtime, fe_group")
 	)
 );
+
+$TCA["tx_sksimplegallery_ecards"] = array (
+    "ctrl" => $TCA["tx_sksimplegallery_ecards"]["ctrl"],
+    "interface" => array (
+        "showRecordFieldList" => "hidden,sender,sendermail,receiver,receivermail,pic,subject,message"
+    ),
+    "feInterface" => $TCA["tx_sksimplegallery_ecards"]["feInterface"],
+    "columns" => array (
+        'hidden' => array (        
+            'exclude' => 1,
+            'label'   => 'LLL:EXT:lang/locallang_general.xml:LGL.hidden',
+            'config'  => array (
+                'type'    => 'check',
+                'default' => '0'
+            )
+        ),
+        "sender" => Array (        
+            "exclude" => 0,        
+            "label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_ecards.sender",        
+            "config" => Array (
+                "type" => "input",    
+                "size" => "30",
+            )
+        ),
+        "sendermail" => Array (        
+            "exclude" => 1,        
+            "label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_ecards.sendermail",        
+            "config" => Array (
+                "type" => "input",    
+                "size" => "30",
+            )
+        ),
+        "recipient" => Array (        
+            "exclude" => 1,        
+            "label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_ecards.recipient",        
+            "config" => Array (
+                "type" => "input",    
+                "size" => "30",
+            )
+        ),
+        "recipientmail" => Array (        
+            "exclude" => 0,        
+            "label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_ecards.recipientmail",        
+            "config" => Array (
+                "type" => "input",    
+                "size" => "30",
+            )
+        ),
+        "pic" => Array (        
+            "exclude" => 0,        
+            "label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_ecards.pic",        
+            "config" => Array (
+                "type" => "group",    
+                "internal_type" => "db", 
+                "show_thumbs" => 1,	   
+                "allowed" => "tx_sksimplegallery_pictures",    
+                "size" => 1,    
+                "minitems" => 0,
+                "maxitems" => 1,
+            )
+        ),
+        "subject" => Array (        
+            "exclude" => 1,        
+            "label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_ecards.subject",        
+            "config" => Array (
+                "type" => "input",    
+                "size" => "80",
+            )
+        ),
+        "message" => Array (        
+            "exclude" => 1,        
+            "label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_ecards.message",        
+            "config" => Array (
+                "type" => "text",
+                "cols" => "50",    
+                "rows" => "10",
+            )
+        ),
+        
+    ),
+    "types" => array (
+        "0" => array("showitem" => "hidden;;1;;1-1-1, sender, sendermail, recipient, recipientmail, pic, subject, message")
+    ),
+    "palettes" => array (
+        "1" => array("showitem" => "")
+    )
+);
+
 ?>

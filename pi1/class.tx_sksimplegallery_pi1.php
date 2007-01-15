@@ -119,6 +119,8 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		if($tmp!='') $this->conf['singleView.']['singleID']=$tmp;
         $tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'singleLayout', 'sSingle');
 		if($tmp!='') $this->conf['singleLayout']=$tmp;
+        $tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'eCards', 'sSingle');
+		if($tmp!='') $this->conf['activateEcards']=$tmp;
         
         //which layout ?
         $this->conf['singleLayout']=intval($this->conf['singleLayout']);
@@ -138,6 +140,9 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 				break;
 			case 'SINGLE':
 				$content=$this->SingleGallery();
+				break;
+            case 'ECARD':
+                $content=$this->eCards();
 				break;
 		}
 	
@@ -242,7 +247,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			    $PB.='</p>';
 		    }
         }
-        
+
 		$this->caption='';
 		for($i=$start;$i<$end;$i++) {
 			$query = $GLOBALS['TYPO3_DB']->SELECTquery(
@@ -279,8 +284,12 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 				    $markerArray['###THUMB###']=$this->pi_linkTP_keepPIvars($markerArray['###THUMB###'],array('id'=>$this->piVars['id'],'backpid'=>$this->piVars['backpid'],'page'=>$this->piVars['page'],'single'=>$thumb['uid']),1,1,$GLOBALS["TSFE"]->id);
 			    }
                 
-			    $markerArray['###THUMBTITLE###']=$thumb['title'];
-               
+                $markerArray['###THUMBTITLE###']=$thumb['title'];
+			    if($this->conf['activateEcards']==1) {  
+                    $linkWrapArray['###ECARDLINK###']=explode('|',$this->pi_linkToPage('|',$this->conf['eCards.']['viewPID'],'',array($this->prefixId.'[newecard]'=>$thumb['uid'],$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id)));   
+                } else {
+                    $subpartArray['###ECARDLINK###']='';
+                }
                 // Adds hook for processing of extra item markers
 		        if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'])) {
 			        foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'] as $_classRef) {
@@ -288,7 +297,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 				        $markerArray = $_procObj->extraSingleMarkerProcessor($markerArray, $thumb, $this);
 			        }
 		        }
-			    $innercontent.=$this->cObj->substituteMarkerArrayCached($template['item'], $markerArray,array(),array());
+			    $innercontent.=$this->cObj->substituteMarkerArrayCached($template['item'], $markerArray,$subpartArray,$linkWrapArray);
                 
 			    if($thumb_ids[$i]==$this->piVars['single']) {
                     $single=$thumb;
@@ -360,8 +369,13 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		
 		$markerArray['###TITLE###']=$row['title'];
 		$markerArray['###DESCRIPTION###']=$this->pi_RTEcssText($row['description']);
-                
-		$markerArray['###BACKLINK###']=$this->piVars['backpid']>0 ? $this->pi_linkTP_keepPIvars($this->pi_getLL('back'),array(),1,1,$this->piVars['backpid']) : '';
+        if($this->conf['activateEcards']==1) {
+            $linkWrapArray['###ECARDSINGLELINK###']=explode('|',$this->pi_linkToPage('|',$this->conf['eCards.']['viewPID'],'',array($this->prefixId.'[newecard]'=>$single['uid'],$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id,$this->prefixId.'[single]'=>$this->piVars['single'])));   
+         
+        } else {
+            $subpartArray['###ECARDSINGLELINK###']='';
+        }
+        $markerArray['###BACKLINK###']=$this->piVars['backpid']>0 ? $this->pi_linkTP_keepPIvars($this->pi_getLL('back'),array(),1,1,$this->piVars['backpid']) : '';
 		$markerArray['###PAGEBROWSER###']=$PB; 
 		
 		// Adds hook for processing of extra item markers
@@ -403,11 +417,236 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
         
         if($this->conf['singleLayout']==1 && !$this->piVars['single']) $subpartArray['###SINGLEPICTUREVIEW###']='';
         
-		return $this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,array());
+		return $this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,$linkWrapArray);
 		
 	}
 	
-	function ImageMarker($lconf,$linkwrap=0) {
+    function eCards() {
+        #$content.='<pre>'.print_r($this->conf,true).'</pre>';
+        #$content.='<pre>'.print_r($this->piVars,true).'</pre>';
+        
+        if($this->piVars['ecard']) 
+            $content.=$this->showEcard();
+        elseif ($this->piVars['newecard']) 
+            $content.=$this->newEcard($this->piVars['newecard']);
+        return $content;
+    }
+    
+    function showEcard() {
+        #$res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_ecards e,tx_sksimplegallery_pictures p', 'e.pic=p.uid and e.uid='.$this->piVars['ecard']);
+        $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_ecards', 'uid='.$this->piVars['ecard'].' and hidden=0 and deleted=0');
+        
+        $row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+        //t3lib_div::debug($row);
+        
+        $key=substr($row['picSrc'],0,strrpos($row['picSrc'],'.'));
+        if($key!=$this->piVars['eckey']) return 'Wrong Ecard! '.$key.'|'.$this->piVars['eckey'];
+        if(!is_file(PATH_site.'uploads/tx_sksimplegallery/ecards/'.$row['picSrc']))  {
+            return 'Ecard doesn\'t exists';
+        }
+        
+        $template['total'] = $this->cObj->getSubpart($this->template,'###ECARD###');
+        
+        $this->conf['singleView.']['file']=$this->uploaddir.$row['picture']; 
+        $markerArray['###PICTURE###']='<img src="uploads/tx_sksimplegallery/ecards/'.$row['picSrc'].'" alt="eCard" title="eCard" />';    
+        
+        $markerArray['###DATE###']=date($this->conf['dateFormat'],$row['crdate']); #date($this->conf['dateFormat'],$row['crdate']);    
+        $eConf['parameter']=$row['sendermail'];
+        $markerArray['###FROM###']=$this->cObj->typoLink($row['sender'],$eConf); 
+        $markerArray['###FROMEMAIL###']=$row['sendermail'];    
+        $markerArray['###TO###']=$row['recipient'];    
+        $markerArray['###TOEMAIL###']=$row['recipientmail'];    
+        $markerArray['###TITLE###']=$row['subject'];    
+        $markerArray['###MESSAGE###']=nl2br($row['message']);    
+        
+        
+        return $this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,array());    
+    }
+    
+    function newEcard($pic) {
+        $sendMail=array();
+        $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_pictures','uid='.$pic);
+        if($res) {
+            $row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); 
+            $markerArray['###HIDDEN###']='
+                <input type="hidden" name="'.$this->prefixId.'[backpid]" value="'.$this->piVars['backpid'].'" />
+                <input type="hidden" name="'.$this->prefixId.'[single]" value="'.$this->piVars['single'].'" />
+            ';
+            $markerArray['###ERROR###']='';
+            
+            //Wurde gepostet ?
+			if (isset($this->piVars['submit'])) {
+                $err=array();
+                
+                #sender
+                if(strlen($this->piVars['sender'])<$this->conf['eCards.']['senderMinChars']) {
+					$err[]=sprintf($this->pi_getLL('ecard_sender_error'),intval($this->conf['eCards.']['senderMinChars']));
+				}
+                #sendermail
+                if(!t3lib_div::validEmail($this->piVars['sendermail'])) {
+                    $err[]=$this->pi_getLL('ecard_sendermail_error');
+                }
+                #recipient
+                if(strlen($this->piVars['recipient'])<$this->conf['eCards.']['recipientMinChars']) {
+					$err[]=sprintf($this->pi_getLL('ecard_recipient_error'),intval($this->conf['eCards.']['recipientMinChars']));
+				}
+                #recipientmail
+                if(!t3lib_div::validEmail($this->piVars['recipientmail'])) {
+                    $err[]=$this->pi_getLL('ecard_recipientmail_error');
+                }
+                #title
+                if(strlen($this->piVars['title'])<$this->conf['eCards.']['titleMinChars']) {
+					$err[]=sprintf($this->pi_getLL('ecard_title_error'),intval($this->conf['eCards.']['titleMinChars']));
+				}
+                #message
+                if(strlen($this->piVars['message'])<$this->conf['eCards.']['messageMinChars']) {
+					$err[]=sprintf($this->pi_getLL('ecard_message_error'),intval($this->conf['eCards.']['messageMinChars']));
+				}
+                
+                #captcha response
+                if (t3lib_extMgm::isLoaded('captcha') && $this->conf['useCaptcha'])	{
+	                session_start();
+	                if ($this->piVars['captchaResponse']!=$_SESSION['tx_captcha_string']) {
+                       $err[]=$this->pi_getLL('captcha_error');    
+                    }
+	                $_SESSION['tx_captcha_string'] = '';
+                }
+                
+                #freecap response
+                if (t3lib_extMgm::isLoaded('sr_freecap') && !$this->conf['useCaptcha'] && $this->conf['useFreecap'] && is_object($this->freeCap) && !$this->freeCap->checkWord($this->piVars['captcha_response'])) {
+                        $err[]=$this->pi_getLL('captcha_error');
+                }
+                
+                if(count($err)>0) {
+                    $markerArray['###ERROR###']=implode('<br />',$err);
+                } else {
+                    $markerArray['###ERROR###']='Prima!';
+                    $doSendMail=true;
+                }
+            
+            }
+            $this->conf['singleView.']['file']=$this->uploaddir.$row['picture']; 
+            $markerArray['###PICTURE###']=$this->ImageMarker($this->conf['singleView.']);    
+            $pictureResource=$this->ImageMarker($this->conf['singleView.'],0,1);    
+           
+            $markerArray['###ECARDFORMLEGEND###']=$this->pi_getLL('ecard_new');
+            $markerArray['###SENDER###']=$this->prefixId.'[sender]';
+            $markerArray['###SENDERMAIL###']=$this->prefixId.'[sendermail]';
+            $markerArray['###RECIPIENT###']=$this->prefixId.'[recipient]';
+            $markerArray['###RECIPIENTMAIL###']=$this->prefixId.'[recipientmail]';
+            $markerArray['###TITLE###']=$this->prefixId.'[title]';
+            $markerArray['###MESSAGE###']=$this->prefixId.'[message]';
+            $markerArray['###SUBMIT###']=$this->prefixId.'[submit]';
+            
+            $markerArray['###V_SENDER###']=$this->piVars['sender'];
+            $markerArray['###V_SENDERMAIL###']=$this->piVars['sendermail'];
+            $markerArray['###V_RECIPIENT###']=$this->piVars['recipient'];
+            $markerArray['###V_RECIPIENTMAIL###']=$this->piVars['recipientmail'];
+            $markerArray['###V_TITLE###']=$this->piVars['title'];
+            $markerArray['###V_MESSAGE###']=$this->piVars['message'];
+            $markerArray['###V_SUBMIT###']=$this->pi_getLL('ecard_submit');       
+            
+            $markerArray['###L_SENDER###']=$this->pi_getLL('ecard_sender');
+            $markerArray['###L_SENDERMAIL###']=$this->pi_getLL('ecard_sendermail');
+            $markerArray['###L_RECIPIENT###']=$this->pi_getLL('ecard_recipient');
+            $markerArray['###L_RECIPIENTMAIL###']=$this->pi_getLL('ecard_recipientmail');
+            
+            $markerArray['###L_TITLE###']=$this->pi_getLL('ecard_title');
+            $markerArray['###L_MESSAGE###']=$this->pi_getLL('ecard_message');
+            $markerArray['###L_SENDER###']=$this->pi_getLL('ecard_sender');
+            
+            $markerArray['###BACKLINK###']='';
+            $markerArray['###BACKLINK###']='';
+            $markerArray['###BACKLINK###']='';
+            
+            #captcha
+            if (t3lib_extMgm::isLoaded('captcha') && $this->conf['useCaptcha'])	{
+	            $markerArray['###CAPTCHAINPUT###'] = '<input type="text" id="captcha" size=10 name="'.$this->prefixId.'[captchaResponse]" value="" />';
+                $markerArray['###CAPTCHAPICTURE###'] = '<img src="'.t3lib_extMgm::siteRelPath('captcha').'captcha/captcha.php" alt="" />';
+            } else {
+	            $subpartArray['###CAPTCHA###'] = '';
+            }
+            
+            #freecap
+            if (t3lib_extMgm::isLoaded('sr_freecap') && !$this->conf['useCaptcha'] && $this->conf['useFreecap']) {
+                $markerArray = array_merge($markerArray, $this->freeCap->makeCaptcha());
+                $subpartArray['###CAPTCHA###'] = '';  
+            } else {
+                $subpartArray['###CAPTCHA_INSERT###'] = ''; 
+            }
+            
+            //for the ecards
+            $markerArray['###BACKLINK###']=$this->pi_linkTP($this->pi_getLL('back'),array($this->prefixId.'[single]'=>$this->piVars['single']),1,$this->piVars['backpid']);     
+            
+            if($doSendMail){
+                $picNameString=md5($this->piVars['recipientmail']).'-'.$row['uid']; 
+                $picName=$picNameString.substr($pictureResource,strrpos($pictureResource,'.'));
+                $markerArray['###PICTURE_URL###']='<img src="'.t3lib_div::getIndpEnv('TYPO3_SITE_URL').'uploads/tx_sksimplegallery/ecards/'.$picName.'" title="ecard" />';            
+
+                #insert in DB
+                $insertArr = array(
+                    'pid'=>intval($this->conf['ecards.']['storagePID']),
+                    'tstamp'=>time(),
+                    'crdate'=>time(),
+                    'sender'=>$this->piVars['sender'],
+                    'sendermail'=>$this->piVars['sendermail'],
+                    'recipient'=>$this->piVars['recipient'],
+                    'recipientmail'=>$this->piVars['recipientmail'],
+                    'pic'=>$row['uid'],
+                    'picSrc'=>$picName,
+                    'subject'=>$this->piVars['title'],  
+                    'message'=>$this->piVars['message'],  
+                    
+                );
+                
+                $res=$GLOBALS['TYPO3_DB']->exec_INSERTquery(
+                  'tx_sksimplegallery_ecards',
+                  $insertArr
+                );
+                
+                $link=t3lib_div::getIndpEnv('TYPO3_SITE_URL').$this->pi_getPageLink($this->conf['eCards.']['viewPID'],'',array($this->prefixId.'[ecard]'=>mysql_insert_id(),$this->prefixId.'[eckey]'=>$picNameString));
+                $markerArray['###LINK###']='<a href="'.$link.'">'.$link.'</a>';
+                
+                
+                #copy picture
+                copy(PATH_site.$pictureResource,PATH_site.'uploads/tx_sksimplegallery/ecards/'.$picName);
+                #send the mail   
+                $template['total'] = $this->cObj->getSubpart($this->template,'###ECARDMAIL###'); 
+                $content=$this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,array());    
+                
+                require_once(PATH_t3lib.'class.t3lib_htmlmail.php'); 
+                $this->htmlMail = t3lib_div::makeInstance('t3lib_htmlmail');
+                $this->htmlMail->start();
+                $this->htmlMail->recipient = $this->piVars['recipientmail'];
+                $this->htmlMail->subject = $this->conf['eCards.']['subject'];
+                $this->htmlMail->from_email = $this->piVars['sendermail'];
+                $this->htmlMail->from_name = $this->piVars['sender'].'<'.$this->piVars['sendermail'].'>';
+                $this->htmlMail->returnPath = $this->conf['eCards.']['returnEmail'];
+                $this->htmlMail->addPlain($content);
+                $this->htmlMail->setHTML($this->htmlMail->encodeMsg($content));
+                $this->htmlMail->send($this->piVars['recipientmail']); 
+
+                $markerArray['###ECARDSENDED###']=$content;
+                #htmlspecialchars($pictureResource."|||".$picName.'|||'.$content);
+                
+                //show sucess
+                $template['total'] = $this->cObj->getSubpart($this->template,'###ECARDSUCCESS###'); 
+                return $content=$this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,array()); 
+                
+                
+            } else {
+                //show form
+                $template['total'] = $this->cObj->getSubpart($this->template,'###ECARDFORM###'); 
+                $content=$this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,array());    
+                return $content;
+            }
+            
+        } else {
+            return 'picture doesn\'t exist.';
+        }
+    }
+    
+	function ImageMarker($lconf,$linkwrap=0,$resourceOnly=0) {
 		#t3lib_div::debug($linkwrap,'linkwrap');
         if($linkwrap==1) {
 			if($this->cObj->data['tx_kjimagelightbox2_imagelightbox2']==0) {
@@ -428,7 +667,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
         if($this->conf['galEffects']!='') $lconf['file.']['params'].=' '.$this->conf['galEffects'];
         if($this->piVars['thumbeffect'])  $lconf['file.']['params']=$this->piVars['thumbeffect'];
 		$this->cObj->data['imagecaption']=$this->caption;
-		return $this->cObj->IMAGE($lconf);
+		return $resourceOnly==0 ? $this->cObj->IMAGE($lconf) : $this->cObj->IMG_RESOURCE($lconf);
 	}
     
     function getExifData($photo) {

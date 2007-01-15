@@ -18,6 +18,18 @@
             <label index="tx_sksimplegallery_galleries.altgalpicture">Alternative Gallery Picture</label>
 			<label index="tt_content.list_type_pi1">Simple Gallery</label>
 			<label index="moduleFunction.tx_sksimplegallery_modfunc1">Simple Gallery Import</label>
+            
+            <label index="tx_sksimplegallery_ecards">eCards</label>
+            <label index="tx_sksimplegallery_ecards.sender">sender</label>
+            <label index="tx_sksimplegallery_ecards.sendermail">sendermail</label>
+            <label index="tx_sksimplegallery_ecards.recipient">recipient</label>
+            <label index="tx_sksimplegallery_ecards.recipientmail">recipientmail</label>
+            <label index="tx_sksimplegallery_ecards.pic">pic</label>
+            <label index="tx_sksimplegallery_ecards.subject">subject</label>
+            <label index="tx_sksimplegallery_ecards.message">message</label>
+            <label index="tx_sksimplegallery_ecards.clicks">clicks</label>
+
+            
 		</languageKey>
         <languageKey index="de" type="array">
 			<label index="tx_sksimplegallery_pictures">Bilder</label>
@@ -32,6 +44,16 @@
             <label index="tx_sksimplegallery_galleries.altgalpicture">Alternatives Anzeigebild für die Galerie</label>
 			<label index="tt_content.list_type_pi1">Simple Gallery</label>
 			<label index="moduleFunction.tx_sksimplegallery_modfunc1">Simple Gallery Import</label>
+            
+            <label index="tx_sksimplegallery_ecards">eCards (Grusskarten)</label>
+            <label index="tx_sksimplegallery_ecards.sender">Absender</label>
+            <label index="tx_sksimplegallery_ecards.sendermail">Absendeadresse</label>
+            <label index="tx_sksimplegallery_ecards.recipient">Empfänger</label>
+            <label index="tx_sksimplegallery_ecards.recipientmail">Empfängeradresse</label>
+            <label index="tx_sksimplegallery_ecards.pic">Bild</label>
+            <label index="tx_sksimplegallery_ecards.subject">Titel</label>
+            <label index="tx_sksimplegallery_ecards.message">Nachricht</label>
+            <label index="tx_sksimplegallery_ecards.clicks">Klicks</label>
 		</languageKey>
 	</data>
 </T3locallang>

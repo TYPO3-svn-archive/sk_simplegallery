@@ -26,7 +26,10 @@
 				        <numIndex index="0">LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_view_input.single</numIndex>
 				        <numIndex index="1">SINGLE</numIndex>
 				        </numIndex>
-				        
+				        <numIndex index="2">
+				        <numIndex index="0">LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_view_input.eCard</numIndex>
+				        <numIndex index="1">ECARD</numIndex>
+				        </numIndex>
 			        </items>
 		        </config>
 	        </TCEforms>
@@ -121,7 +124,7 @@
 				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewList.width</label>
 				<config>
 					<type>input</type>
-					<size>3</size>
+					<size>8</size>
 					<max>9</max>
 					<eval>trim</eval>
 				</config>
@@ -133,7 +136,7 @@
 				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewList.height</label>
 				<config>
 					<type>input</type>
-					<size>3</size>
+					<size>8</size>
 					<max>9</max>
 					<eval>trim</eval>
 				</config>
@@ -183,7 +186,7 @@
 				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewList.width</label>
 				<config>
 					<type>input</type>
-					<size>3</size>
+					<size>8</size>
 					<max>9</max>
 					<eval>trim</eval>
 				</config>
@@ -195,7 +198,7 @@
 				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewList.height</label>
 				<config>
 					<type>input</type>
-					<size>3</size>
+					<size>8</size>
 					<max>9</max>
 					<eval>trim</eval>
 				</config>
@@ -245,6 +248,15 @@
 			</TCEforms>
 		  </singleLayout>
         
+          <eCards>
+		  	<TCEforms>
+				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewSingle.ecard</label>
+				<config>
+					<type>check</type>
+				</config>
+			</TCEforms>
+		  </eCards>
+          
 		  <singleID>
 		  	<TCEforms>
 				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewSingle.singleID</label>

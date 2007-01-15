@@ -1,16 +1,6 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-	"http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-
-<title>Untitled</title>
-
-</head>
-
-<body>
-
-
-
+###############################################
+#####  GALLERIES                         ######
+###############################################
 <h1>Gallery List</h1>
 <!-- ###LISTVIEW### start -->
 
@@ -25,6 +15,9 @@
 <!-- ###LISTVIEW### end -->
 
 
+###############################################
+#####  SINGLE GALLERY                    ######
+###############################################
 <h1>Single Gallery</h1>
 
 <!-- ###SINGLEVIEW### start -->
@@ -37,6 +30,12 @@
 <dl class="single" ###WIDTH###>
 <dt>###THUMB###</dt>
 <dd>###THUMBTITLE###
+<!--
+for work with sk_pagecomments you can add this Marker:
+<br />###COMMENTCOUNT###
+-->
+<br /><!-- ###ECARDLINK### -->Ecard<!-- ###ECARDLINK### -->
+
 <p class="exif">###EXIF###</p>
 </dd>
 </dl>
@@ -47,6 +46,7 @@
 <h3>###SINGLETITLE###</h3>
 <p>###SINGLEPICTURE###
 ###SINGLEDESCRIPTION###</p>
+<br /><!-- ###ECARDSINGLELINK### -->Ecard<!-- ###ECARDSINGLELINK### -->  
 <!-- ###SINGLEONE### end -->
 
 
@@ -55,7 +55,9 @@
 <!-- ###SINGLEVIEW### end -->
 
 
-
+###############################################
+#####  ALTERNATIVE SINGLE GALLERY        ######
+###############################################
 New Single Layout 
 To Use this you have to activate the alternative Single Layout
 
@@ -74,12 +76,12 @@ To Use this you have to activate the alternative Single Layout
 <dl class="single" ###WIDTH###>
 <dt>###THUMB###</dt>
 <dd>###THUMBTITLE###
-
+    
 <!--
 for work with sk_pagecomments you can add this Marker:
 <br />###COMMENTCOUNT###
 -->
-
+<br /><!-- ###ECARDLINK### -->Ecard<!-- ###ECARDLINK### -->
 </dd>
 </dl>
 <!-- ###THUMBLIST### end -->
@@ -98,7 +100,9 @@ for work with sk_pagecomments you can add this Marker:
 <div style="loat:right;">###EXIF###</div>
 <br class="clear" />
 <p>
-###SINGLEDESCRIPTION###</p>
+###SINGLEDESCRIPTION###
+<br /><!-- ###ECARDSINGLELINK### -->Ecard<!-- ###ECARDSINGLELINK### -->  
+</p>
 
 
 ###SINGLE_LINK_TO_PREVIOUS_PICTURE### | ###SINGLE_LINK_TO_THUMBNAILS### | ###SINGLE_LINK_TO_NEXT_PICTURE###
@@ -114,5 +118,117 @@ for work with sk_pagecomments you can add this Marker:
 <!-- ###SINGLEVIEW1### end -->
 
 
+
+###############################################
+#####  ECARDS                            ######
+###############################################
+<!-- ###ECARD### start -->
+<p>:::###DATE###:::</p>
+<h3>eCard for ###TO###
+<p>from ###FROM### (###FROMEMAIL###)</p>
+<p>###TITLE###</p>
+<p>###PICTURE### </p>
+<p>###MESSAGE###</p>
+<!-- ###ECARD### end -->
+
+
+###############################################
+#####  ECARD FORM                        ######
+###############################################
+
+<!-- ###ECARDFORM### start -->
+<div style="width:440px;">
+<p class="error">###ERROR###</p>
+<!-- ###FORM### start -->
+<form action="" method="post" id="eCardForm">
+###HIDDEN###
+<fieldset>
+<legend>###ECARDFORMLEGEND###</legend>
+<p>
+    <label for="sender">###L_SENDER###</label>
+    <input type="text" id="sender" name="###SENDER###" size="25" value="###V_SENDER###" />
+</p>
+
+<p>
+    <label for="sendermail">###L_SENDERMAIL###</label>
+    <input type="text" id="sendermail" name="###SENDERMAIL###" size="25" value="###V_SENDERMAIL###" />
+</p>
+
+<p>
+    <label for="recipient">###L_RECIPIENT###</label>
+    <input type="text" id="recipient" name="###RECIPIENT###" size="25" value="###V_RECIPIENT###" />
+</p>
+
+<p>
+    <label for="recipientmail">###L_RECIPIENTMAIL###</label>
+    <input type="text" id="recipientmail" name="###RECIPIENTMAIL###" size="25" value="###V_RECIPIENTMAIL###" />
+</p>
+
+<p>###PICTURE###</p>
+
+<p>
+    <label for="title">###L_TITLE###</label>
+    <input type="text" id="title" name="###TITLE###" size="25" value="###V_TITLE###" />
+</p>
+<p>
+  <label for="message">###L_MESSAGE###</label>
+  <textarea id="message" name="###MESSAGE###" cols="40" rows="5" wrap="virtual">###V_MESSAGE###</textarea>
+</p>
+
+<!--###CAPTCHA### start -->
+<p>
+  <label for="captcha">###L_CAPTCHA###</label>
+  ###CAPTCHAINPUT### ###CAPTCHAPICTURE###
+</p>
+<!--###CAPTCHA### end -->
+
+<!--###CAPTCHA_INSERT### this subpart is removed if CAPTCHA is not enabled! -->
+<p>
+<label for="freecap">###SR_FREECAP_NOTICE###</label>
+###SR_FREECAP_CANT_READ###
+<br />
+<input type="text" size="15" id="freecap" name="tx_sksimplegallery_pi1[captcha_response]" title="###SR_FREECAP_NOTICE###" value="" />
+###SR_FREECAP_IMAGE###
+</p>
+<!--###CAPTCHA_INSERT###-->
+
+<p>
+    <label for="ecardsubmit">&nbsp;</label>
+    <input type="submit" id="ecardsubmit" name="###SUBMIT###" value="###V_SUBMIT###" />
+</p>
+
+</fieldset>
+</form>
+<!-- ###FORM### end --> 
+
+<p>###BACKLINK### </p>
+</div>
+<!-- ###ECARDFORM### end --> 
+
+
+
+###############################################
+#####  ECARD MAIL                        ######
+###############################################
+<!-- ###ECARDMAIL### start --> 
+<html>
+<body>
+<head>
+<title>ECARD from xxx.ddd.com</title>
+
+<body>
+<p>Du hast eine Ecard von ###V_SENDER### bekommen:</p>
+<h1>###V_TITLE###</h1>
+<p>###V_MESSAGE###</p>
+<p>###PICTURE_URL###</p>
+<p>###LINK###</p>
 </body>
-</html>
+<!-- ###ECARDMAIL### end --> 
+
+###############################################
+#####  ECARD MAIL SUCCESS MESSAGE        ######
+###############################################
+<!-- ###ECARDSUCCESS### start --> 
+<h3>Die Ecard wurde erfolgreich an ###V_RECIPIENT### versandt!</h3>
+###ECARDSENDED###
+<!-- ###ECARDSUCCESS### end --> 

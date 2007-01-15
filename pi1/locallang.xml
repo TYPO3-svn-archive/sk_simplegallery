@@ -9,7 +9,8 @@
 			<label index="ff_view">View</label>
 			<label index="ff_view_input">View</label>
 			<label index="ff_view_input.list">Galleries</label>
-			<label index="ff_view_input.single">Single Gallery</label>
+            <label index="ff_view_input.single">Single Gallery</label>
+			<label index="ff_view_input.eCard">eCards</label>
 			<label index="ff_view_input.template_file">Template File</label>
 			<label index="ff_view_input.gal_effects">Effects</label>
             
@@ -26,7 +27,8 @@
 			
 			<label index="ff_viewSingle.maxW">max. Width for Single Picture</label>
 			<label index="ff_viewSingle.maxH">max. Height for Single Picture</label>
-			<label index="ff_viewSingle.singleID">ID of Galery</label> 
+            <label index="ff_viewSingle.singleID">ID of Galery</label> 
+			<label index="ff_viewSingle.ecard">enable eCards</label> 
 			<label index="back">Back</label>
 			<label index="submit_button_label">Click here to submit value</label>
             
@@ -54,13 +56,36 @@
             <label index="exif_apertureF">apertureF</label> 
             
             
+            <label index="ecard_new">Write a Ecard!</label> 
+            <label index="ecard_submit">send the Ecard</label> 
+            <label index="ecard_sender">Your name</label> 
+            <label index="ecard_sendermail">Your email</label> 
+            <label index="ecard_recipient">Name of recipient</label> 
+            <label index="ecard_recipientmail">Email of recipient</label> 
+            <label index="ecard_title">Title</label> 
+            <label index="ecard_message">Message</label> 
+            <label index="ecard_submit">send the Ecard</label> 
+            <label index="ecard_submit">send the Ecard</label> 
+            <label index="ecard_submit">send the Ecard</label> 
+            
+            <label index="ecard_sender_error">Please fill out your name (min. %s chars)!</label>
+            <label index="ecard_sendermail_error">Your email is not valid!</label>
+            <label index="ecard_recipient_error">Please fill out recipient's name (min. %s chars)!</label>
+            <label index="ecard_recipientmail_error">Invalid recipient email!</label>
+            <label index="ecard_title_error">Please fill out title (min. %s chars)!</label>
+            <label index="ecard_message_error">Please fill out message (min. %s chars)</label>
+            
+            <label index="captcha">Please enter the following numbers / letters </label> 
+            <label index="captcha_error">The entered Picture Chars are not correct !</label>
+            
             
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="ff_view">Ansicht</label>
 			<label index="ff_view_input">Ansicht</label>
 			<label index="ff_view_input.list">Galerien</label>
-			<label index="ff_view_input.single">Einzelgalerie</label>
+            <label index="ff_view_input.single">Einzelgalerie</label>
+			<label index="ff_view_input.eCards">eCards (Grusskarten)</label>
 			<label index="ff_view_input.template_file">Template Datei</label>
 			<label index="ff_view_input.gal_effects">Effekte</label>
             
@@ -78,6 +103,7 @@
 			<label index="ff_viewSingle.maxW">max. Breite des Einzelbildes</label>
 			<label index="ff_viewSingle.maxH">max. Höhe des Einzelbildes</label>
 			<label index="ff_viewSingle.singleID">ID der Galerie</label>
+            <label index="ff_viewSingle.ecard">aktiviere eCards</label>   
             
 			<label index="back">zurück</label>
 			<label index="submit_button_label">Click here to submit value</label>
