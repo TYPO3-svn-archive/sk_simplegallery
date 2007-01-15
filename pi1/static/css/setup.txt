@@ -47,7 +47,10 @@ plugin.tx_sksimplegallery_pi1._CSS_DEFAULT_STYLE (
 	text-align:center;
 	font-weight:bold;
 }
-
+.tx-sksimplegallery-pi1 dl.single dd span {
+    float:right;
+    font-size:70%
+}
 .tx-sksimplegallery-pi1 h3 {
 	margin:6px;
 }
@@ -91,7 +94,10 @@ plugin.tx_sksimplegallery_pi1._CSS_DEFAULT_STYLE (
     width:260px;
     float:right;
 }
-
+.tx-sksimplegallery-pi1 #eCardForm img {
+   margin:12px 0;
+   border:4px #ddd ridge;
+}
 .tx-sksimplegallery-pi1 .error {
     color:red;
     font-weight:bold;

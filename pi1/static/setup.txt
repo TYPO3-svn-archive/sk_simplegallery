@@ -77,6 +77,8 @@ plugin.tx_sksimplegallery_pi1 {
         titleMinChars = 5
         messageMinChars = 20
         subject = You recieved a eCard from xxx.xxx.com
+        returnEmail = 
+        lifeTime = 14
     }
     
 	# Rendering of entries. re-use the RTE parseFunc configuration for normal

@@ -64,9 +64,6 @@
             <label index="ecard_recipientmail">Email of recipient</label> 
             <label index="ecard_title">Title</label> 
             <label index="ecard_message">Message</label> 
-            <label index="ecard_submit">send the Ecard</label> 
-            <label index="ecard_submit">send the Ecard</label> 
-            <label index="ecard_submit">send the Ecard</label> 
             
             <label index="ecard_sender_error">Please fill out your name (min. %s chars)!</label>
             <label index="ecard_sendermail_error">Your email is not valid!</label>
@@ -74,6 +71,8 @@
             <label index="ecard_recipientmail_error">Invalid recipient email!</label>
             <label index="ecard_title_error">Please fill out title (min. %s chars)!</label>
             <label index="ecard_message_error">Please fill out message (min. %s chars)</label>
+            <label index="ecard_linkWithLifetime">You can click on this link to see the eCard online. The link will be online for %s days.</label>
+            <label index="ecard_linkWithoutLifetime">You can click on this link to see the eCard online.</label>
             
             <label index="captcha">Please enter the following numbers / letters </label> 
             <label index="captcha_error">The entered Picture Chars are not correct !</label>
@@ -130,6 +129,27 @@
             <label index="exif_whiteBalance">Weissabgleich</label> 
             <label index="exif_focalLength">Brennweite</label> 
             <label index="exif_apertureF">Blende</label> 
+            
+            <label index="ecard_new">Schreibe eine Ecard!</label> 
+            <label index="ecard_submit">Ecard abschicken</label> 
+            <label index="ecard_sender">Dein Name</label> 
+            <label index="ecard_sendermail">Deine E-Mail</label> 
+            <label index="ecard_recipient">Empfänger</label> 
+            <label index="ecard_recipientmail">E-Mail des Empfängers</label> 
+            <label index="ecard_title">Titel</label> 
+            <label index="ecard_message">Nachricht</label> 
+            
+            <label index="ecard_sender_error">Bitte Deinen Namen angeben (min. %s Zeichen)!</label>
+            <label index="ecard_sendermail_error">Deine E-Mail ist ungültig!</label>
+            <label index="ecard_recipient_error">Bitte Empfänger angeben (min. %s Zeichen)!</label>
+            <label index="ecard_recipientmail_error">Die E-Mail des Empfängers ist ungültig!</label>
+            <label index="ecard_title_error">Bitte Titel angeben (min. %s Zeichen)!</label>
+            <label index="ecard_message_error">Bitte Nachricht angeben (min. %s Zeichen)</label>
+            <label index="ecard_linkWithLifetime">Über folgenden Link gelangen Sie zur Online-Version der eCard. Der Link hat eine Gültigkeit von %s Tagen.</label>
+            <label index="ecard_linkWithoutLifetime">Über folgenden Link gelangen Sie zur Online-Version der eCard.</label>
+            
+            <label index="captcha">Bitte folgende Zeichen eingeben </label> 
+            <label index="captcha_error">Die eingegebenen Zeichen stimmen nicht überein !</label>
             
             
 		</languageKey>

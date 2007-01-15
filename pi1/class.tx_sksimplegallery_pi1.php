@@ -465,6 +465,8 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
     
     function newEcard($pic) {
         $sendMail=array();
+        //check for lifetime of ecards
+        $this->ecardLifetime();
         $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_pictures','uid='.$pic);
         if($res) {
             $row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); 
@@ -585,7 +587,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 
                 #insert in DB
                 $insertArr = array(
-                    'pid'=>intval($this->conf['ecards.']['storagePID']),
+                    'pid'=>intval($this->conf['eCards.']['storagePID']),
                     'tstamp'=>time(),
                     'crdate'=>time(),
                     'sender'=>$this->piVars['sender'],
@@ -606,7 +608,11 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
                 
                 $link=t3lib_div::getIndpEnv('TYPO3_SITE_URL').$this->pi_getPageLink($this->conf['eCards.']['viewPID'],'',array($this->prefixId.'[ecard]'=>mysql_insert_id(),$this->prefixId.'[eckey]'=>$picNameString));
                 $markerArray['###LINK###']='<a href="'.$link.'">'.$link.'</a>';
-                
+                if(intval($this->conf['eCards.']['lifeTime'])>0) {  
+                    $markerArray['###LINK###']=sprintf($this->pi_getLL('ecard_linkWithLifetime'),$this->conf['eCards.']['lifeTime']);
+                } else {
+                    $markerArray['###LINK###']=$this->pi_getLL('ecard_linkWithoutLifetime');
+                }
                 
                 #copy picture
                 copy(PATH_site.$pictureResource,PATH_site.'uploads/tx_sksimplegallery/ecards/'.$picName);
@@ -620,13 +626,13 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
                 $this->htmlMail->recipient = $this->piVars['recipientmail'];
                 $this->htmlMail->subject = $this->conf['eCards.']['subject'];
                 $this->htmlMail->from_email = $this->piVars['sendermail'];
-                $this->htmlMail->from_name = $this->piVars['sender'].'<'.$this->piVars['sendermail'].'>';
+                $this->htmlMail->from_name = $this->piVars['sender'];
                 $this->htmlMail->returnPath = $this->conf['eCards.']['returnEmail'];
                 $this->htmlMail->addPlain($content);
                 $this->htmlMail->setHTML($this->htmlMail->encodeMsg($content));
                 $this->htmlMail->send($this->piVars['recipientmail']); 
 
-                $markerArray['###ECARDSENDED###']=$content;
+                $markerArray['###ECARDSENDED###']=''; $content;
                 #htmlspecialchars($pictureResource."|||".$picName.'|||'.$content);
                 
                 //show sucess
@@ -644,6 +650,20 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
         } else {
             return 'picture doesn\'t exist.';
         }
+    }
+    
+    function ecardLifetime() {
+        if(intval($this->conf['eCards.']['lifeTime'])>0) {
+            $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_ecards','hidden=0 and deleted=0 and DATEDIFF(CURDATE(),FROM_UNIXTIME(crdate))>'.intval($this->conf['eCards.']['lifeTime']));
+            if($res) {
+                while($row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+                    #delete picture
+                    @unlink(PATH_site.$pictureResource,PATH_site.'uploads/tx_sksimplegallery/ecards/'.$row['picSrc']);
+                     #delete record
+                     $tmp=$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_sksimplegallery_ecards','uid='.$row['uid'],array('deleted'=>1));
+                }
+            }
+        }    
     }
     
 	function ImageMarker($lconf,$linkwrap=0,$resourceOnly=0) {
