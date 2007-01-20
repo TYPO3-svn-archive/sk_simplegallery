@@ -38,6 +38,8 @@
             <label index="pi_list_browseresults_up">Overview</label> 
             <label index="pi_list_browseresults_first">First Picture</label> 
             <label index="pi_list_browseresults_last">Last Picture</label> 
+            <label index="pi_list_browseresults_picture">Picture</label>
+            <label index="pi_list_browseresults_of">of</label>
             
             <!-- EXIF Labels -->
             <label index="exif_make">Manufacturer</label> 
@@ -113,6 +115,8 @@
             <label index="pi_list_browseresults_up">Übersicht</label> 
             <label index="pi_list_browseresults_first">erstes Bild</label> 
             <label index="pi_list_browseresults_last">letztes Bild</label>
+            <label index="pi_list_browseresults_picture">Bild</label>
+            <label index="pi_list_browseresults_of">von</label>
             
             <!-- EXIF Labels -->
             <label index="exif_make">Hersteller</label> 
