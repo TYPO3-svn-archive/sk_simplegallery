@@ -28,7 +28,8 @@
 			<label index="ff_viewSingle.maxW">max. Width for Single Picture</label>
 			<label index="ff_viewSingle.maxH">max. Height for Single Picture</label>
             <label index="ff_viewSingle.singleID">ID of Galery</label> 
-			<label index="ff_viewSingle.ecard">enable eCards</label> 
+            <label index="ff_viewSingle.ecard">enable eCards</label> 
+			<label index="ff_viewSingle.downloads">enable downloads</label> 
 			<label index="back">Back</label>
 			<label index="submit_button_label">Click here to submit value</label>
             
@@ -38,8 +39,6 @@
             <label index="pi_list_browseresults_up">Overview</label> 
             <label index="pi_list_browseresults_first">First Picture</label> 
             <label index="pi_list_browseresults_last">Last Picture</label> 
-            <label index="pi_list_browseresults_picture">Picture</label>
-            <label index="pi_list_browseresults_of">of</label>
             
             <!-- EXIF Labels -->
             <label index="exif_make">Manufacturer</label> 
@@ -105,7 +104,8 @@
 			<label index="ff_viewSingle.maxH">max. Höhe des Einzelbildes</label>
 			<label index="ff_viewSingle.singleID">ID der Galerie</label>
             <label index="ff_viewSingle.ecard">aktiviere eCards</label>   
-            
+            <label index="ff_viewSingle.downloads">aktiviere Downloads</label> 
+			
 			<label index="back">zurück</label>
 			<label index="submit_button_label">Click here to submit value</label>
             
@@ -115,8 +115,6 @@
             <label index="pi_list_browseresults_up">Übersicht</label> 
             <label index="pi_list_browseresults_first">erstes Bild</label> 
             <label index="pi_list_browseresults_last">letztes Bild</label>
-            <label index="pi_list_browseresults_picture">Bild</label>
-            <label index="pi_list_browseresults_of">von</label>
             
             <!-- EXIF Labels -->
             <label index="exif_make">Hersteller</label> 

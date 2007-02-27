@@ -27,7 +27,8 @@ CREATE TABLE tx_sksimplegallery_pictures (
 	title tinytext NOT NULL,
 	description text NOT NULL,
 	picture blob NOT NULL,
-	
+	downloads int(11) DEFAULT '0' NOT NULL, 
+    
 	PRIMARY KEY (uid),
 	KEY parent (pid)
 );

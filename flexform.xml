@@ -257,6 +257,15 @@
 			</TCEforms>
 		  </eCards>
           
+          <downloads>
+		  	<TCEforms>
+				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewSingle.downloads</label>
+				<config>
+					<type>check</type>
+				</config>
+			</TCEforms>
+		  </downloads>
+          
 		  <singleID>
 		  	<TCEforms>
 				<label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewSingle.singleID</label>

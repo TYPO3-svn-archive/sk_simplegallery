@@ -4,7 +4,7 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 $TCA["tx_sksimplegallery_pictures"] = Array (
 	"ctrl" => $TCA["tx_sksimplegallery_pictures"]["ctrl"],
 	"interface" => Array (
-		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group,title,description,picture"
+		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group,title,description,picture,downloads"
 	),
 	"feInterface" => $TCA["tx_sksimplegallery_pictures"]["feInterface"],
 	"columns" => Array (
@@ -132,9 +132,26 @@ $TCA["tx_sksimplegallery_pictures"] = Array (
 				"maxitems" => 1,
 			)
 		),
+        "downloads" => Array (        
+        "exclude" => 1,        
+        "label" => "LLL:EXT:ddd/locallang_db.xml:tx_sksimplegallery_pictures.downloads",        
+        "config" => Array (
+            "type"     => "input",
+            "size"     => "8",
+            "max"      => "8",
+            "eval"     => "int",
+            "checkbox" => "0",
+            "range"    => Array (
+                "upper" => "1000000",
+                "lower" => "0"
+            ),
+            "default" => 0
+        )
+    ),
+
 	),
 	"types" => Array (
-		"0" => Array("showitem" => "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, title;;;;2-2-2, description;;;richtext[cut|copy|paste|formatblock|textcolor|bold|italic|underline|left|center|right|orderedlist|unorderedlist|outdent|indent|link|table|image|line|chMode]:rte_transform[mode=ts_css|imgpath=uploads/tx_sksimplegallery/rte/];3-3-3, picture")
+		"0" => Array("showitem" => "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, title;;;;2-2-2, description;;;richtext[cut|copy|paste|formatblock|textcolor|bold|italic|underline|left|center|right|orderedlist|unorderedlist|outdent|indent|link|table|image|line|chMode]:rte_transform[mode=ts_css|imgpath=uploads/tx_sksimplegallery/rte/];3-3-3, picture,downloads")
 	),
 	"palettes" => Array (
 		"1" => Array("showitem" => "starttime, endtime, fe_group")
