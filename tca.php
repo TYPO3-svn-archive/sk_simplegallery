@@ -286,7 +286,7 @@ $TCA["tx_sksimplegallery_galleries"] = Array (
 				"allowed" => "tx_sksimplegallery_pictures",	
 				"size" => 10,	
 				"minitems" => 0,
-				"maxitems" => 50,
+				"maxitems" => 500,
 			)
 		),
 		"galpicture" => Array (		

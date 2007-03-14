@@ -54,46 +54,23 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		$this->pi_loadLL();
 		$this->uploaddir = 'uploads/tx_sksimplegallery/';
 		
-        
-        if($this->piVars['download']) {
-            //direct download of source
-            
-            $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('picture','tx_sksimplegallery_pictures','uid='.$this->piVars['download']);
-            $row=$GLOBALS['TYPO3_DB']->sql_fetch_row($res); 
-            if($row) {
-                $file=$this->uploaddir.$row[0];
-                
-                header("Pragma: public");
-                header("Expires: 0");
-                header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-                header("Content-Type: application/force-download");
-                $user_agent = strtolower ($_SERVER["HTTP_USER_AGENT"]);
-                if ((is_integer (strpos($user_agent, "msie"))) && (is_integer (strpos($user_agent, "win")))) {
-                   header("Content-Disposition: filename=".basename($file).";");
-                } else {
-                   header("Content-Disposition: attachment; filename=".basename($file).";");
-                }
-                header("Content-Transfer-Encoding: binary");
-                header("Content-Length: ".filesize($file));
-                readfile($file);
-                exit;
-            }
-        }
         if($this->conf['debug']) debug($this->piVars);
-       
-       
+		// sys_language_mode defines what to do if the requested translation is not found
+		$this->sys_language_mode = $this->conf['sys_language_mode']?$this->conf['sys_language_mode'] : $GLOBALS['TSFE']->sys_language_mode;
+
 		// parse XML data into php array
 		$this->pi_initPIflexForm(); 
 		
 		//Flexform Values
 		//view
 		$this->conf['view'] = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'view_input', 'sVIEW');
+		
 		#echo "VIEW: ".$this->conf['view'];
 		$templateFile = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'template_file', 'sVIEW');
 		if($templateFile=='')
 			$this->conf['templateFile'] = $this->conf['templateFile']=='' ? 'typo3conf/ext/'.$this->extKey.'/pi1/template.html' : $this->conf['templateFile'];
 		else
-			$this->conf['templateFile'] =$templateFile;
+			$this->conf['templateFile'] ="uploads/tx_sksimplegallery/$templateFile";
 		
         $tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'gal_effects', 'sVIEW');
 		if($tmp!='') $this->conf['galEffects']=$tmp;
@@ -146,8 +123,6 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		if($tmp!='') $this->conf['singleLayout']=$tmp;
         $tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'eCards', 'sSingle');
 		if($tmp!='') $this->conf['activateEcards']=$tmp;
-        $tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'downloads', 'sSingle');
-		if($tmp!='') $this->conf['activateDownloads']=$tmp;
         
         //which layout ?
         $this->conf['singleLayout']=intval($this->conf['singleLayout']);
@@ -160,7 +135,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		//proceed now
 		$this->template=$this->cObj->fileResource($this->conf['templateFile']);
 		$this->pidList = $this->pi_getPidList($this->cObj->data['pages'],$this->cObj->data['recursive']);
-		
+
 		switch($this->conf['view']) {
 			case 'LIST':
 				$content=$this->Galleries();
@@ -193,18 +168,42 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			$PB.='</p>';
 		}
         
+        //language patch from Marcus Krause
+        $where = '';
+		if ($this->sys_language_mode == 'strict' && $GLOBALS['TSFE']->sys_language_content) {
+		    $tmpres = $this->cObj->exec_getQuery('tx_sksimplegallery_galleries', array('selectFields' => 'tx_sksimplegallery_galleries.l18n_parent', 'where' => 'tx_sksimplegallery_galleries.sys_language_uid = '.$GLOBALS['TSFE']->sys_language_content.$this->enableFields, 'pidInList' => $this->pidList));
+			$strictUids = array();
+		    while ($tmprow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($tmpres)) {
+		        $strictUids[] = $tmprow['l18n_parent'];
+		    }
+		    $strStrictUids = implode(',', $strictUids);
+		    $where .= '(tx_sksimplegallery_galleries.uid IN (' . ($strStrictUids?$strStrictUids:0) . ') OR tx_sksimplegallery_galleries.sys_language_uid=-1)';
+		} else {
+		    $where .= 'tx_sksimplegallery_galleries.sys_language_uid IN (0,-1)';
+        }
+		
+		// Auswahl des Ordners
+		if ($this->pidList) $where .= ' AND pid IN ('. $this->pidList .')';
+		$where .= ' AND deleted = 0 AND hidden = 0';
+        
         
 		$query = $GLOBALS['TYPO3_DB']->SELECTquery(
                 '*',         // SELECT ...
                 'tx_sksimplegallery_galleries',     // FROM ...
-                'pid in ('.$this->pidList.') and deleted=0 and hidden=0',    // WHERE...
+                $where,    // WHERE...
                 '',            // GROUP BY...
-                'title',    // ORDER BY...
+                'sorting',    // ORDER BY...
                 $limit            // LIMIT ...
             );
-		$res = $GLOBALS['TYPO3_DB']->sql(TYPO3_db, $query);
+	    
+	    $res = $GLOBALS['TYPO3_DB']->sql(TYPO3_db, $query);
 		while($temp = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-			//prepare picture
+			// get the translated record if the content language is not the default language
+			if ($GLOBALS['TSFE']->sys_language_content) {
+   				$OLmode = ($this->sys_language_mode == 'strict'?'hideNonTranslated':'');
+   				$temp = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tx_sksimplegallery_galleries', $temp, $GLOBALS['TSFE']->sys_language_content, $OLmode);
+			}
+            //prepare picture
 			$this->conf['listView.']['file']=$temp['altgalpicture'] ? $this->uploaddir.$temp['altgalpicture'] : $this->uploaddir.$this->getGalpicture($temp['galpicture']); 
 			$this->conf['listView.']['params'] = $this->pi_classParam('image');
 			$this->conf['listView.']['altText'] = $temp['title'];
@@ -212,10 +211,10 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			$markerArray['###PICTURE###']=$this->ImageMarker($this->conf['listView.'],true);
 			$imginfo=$GLOBALS['TSFE']->lastImageInfo;
 			$markerArray['###WIDTH###']='style="width:'.$imginfo[0].'px;"';
-            
-            $this->cObj->setCurrentVal($temp['title']);
-			$markerArray['###TITLE###']=$this->cObj->stdWrap($temp['title'],$this->conf['galery.']['title_stdWrap.']);
-			$subpartArray['###LINK_ITEM###']= explode('|',$this->pi_linkToPage('|',$this->conf['singlePID'],'',array($this->prefixId.'[id]'=>$temp['uid'],$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id)));
+			$markerArray['###TITLE###']=$temp['title'];
+			$cache = 1;
+    		$this->pi_USER_INT_obj = 0;
+			$subpartArray['###LINK_ITEM###']= explode('|',$this->pi_linkTP('|',$urlParameters=array($this->prefixId.'[id]'=>$temp['uid'],$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id),$cache,$altPageId=$this->conf['singlePID']));
 			$innercontent.=$this->cObj->substituteMarkerArrayCached($template['item'], $markerArray,array(),$subpartArray);
 		}
         $markerArray=array();
@@ -225,17 +224,53 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 	}
 	
     function getGalpicture($uid) {
+       $where = '';
+       if ($this->sys_language_mode == 'strict' && $GLOBALS['TSFE']->sys_language_content) {
+       	   $tmpres = $this->cObj->exec_getQuery('tx_sksimplegallery_pictures', array('selectFields' => 'tx_sksimplegallery_pictures.l18n_parent', 'where' => 'tx_sksimplegallery_pictures.sys_language_uid = '.$GLOBALS['TSFE']->sys_language_content.$this->enableFields, 'pidInList' => $this->pidList));
+		   $strictUids = array();
+		   while ($tmprow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($tmpres)) {
+		       $strictUids[] = $tmprow['l18n_parent'];
+		   }
+		   $strStrictUids = implode(',', $strictUids);
+		   $where .= '(tx_sksimplegallery_pictures.uid IN (' . ($strStrictUids?$strStrictUids:0) . ') OR tx_sksimplegallery_pictures.sys_language_uid=-1)';
+		} else {
+		    $where .= 'tx_sksimplegallery_pictures.sys_language_uid IN (0,-1)';
+        }
+       $where .= ' AND uid = ' . intval($uid) . ' AND deleted = 0 AND hidden = 0';
+       
+       
+       
        $query = $GLOBALS['TYPO3_DB']->SELECTquery(
-                'picture',         // SELECT ...
+                '*',         // SELECT ...
                 'tx_sksimplegallery_pictures',     // FROM ...
-                'uid='.$uid.' and hidden=0 and deleted=0',    // WHERE...
+                $where,    // WHERE...
                 '',            // GROUP BY...
                 '',    // ORDER BY...
                 ''            // LIMIT ...
             );
        $res = $GLOBALS['TYPO3_DB']->sql(TYPO3_db, $query); 
-       $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-       return $row['picture'];
+       // already localized picture
+	   if (!$GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
+	       $query = $GLOBALS['TYPO3_DB']->SELECTquery(
+		   			'picture',         // SELECT ...
+					'tx_sksimplegallery_pictures',     // FROM ...
+					'uid = ' . intval($uid) . ' AND deleted = 0 AND hidden = 0',
+					'',            // GROUP BY...
+					'',    // ORDER BY...
+					''            // LIMIT ...
+					);
+	       $res = $GLOBALS['TYPO3_DB']->sql(TYPO3_db, $query);
+		   $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+		   return $row['picture'];
+	   } else {
+	       $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+	       // get the translated record if the content language is not the default language
+	       if ($GLOBALS['TSFE']->sys_language_content) {
+				$OLmode = ($this->sys_language_mode == 'strict'?'hideNonTranslated':'');
+				$row = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tx_sksimplegallery_pictures', $row, $GLOBALS['TSFE']->sys_language_content, $OLmode);
+	       }
+	       return $row['picture'];
+	   }
     }
     
 	function SingleGallery() {
@@ -248,12 +283,29 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		$page=intval($this->piVars['page']); 
         
         // get Data
-        $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_sksimplegallery_galleries', 'uid='.$this->piVars['id']); 
-        if(!$res) {
+		$where = '';
+		if ($this->sys_language_mode == 'strict' && $GLOBALS['TSFE']->sys_language_content) {
+			$tmpres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('tx_sksimplegallery_galleries.l18n_parent', 'tx_sksimplegallery_galleries', 'tx_sksimplegallery_galleries.sys_language_uid = '.$GLOBALS['TSFE']->sys_language_content.$this->enableFields);
+			$strictUids = array();
+		    while ($tmprow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($tmpres)) {
+		        $strictUids[] = $tmprow['l18n_parent'];
+		    }
+		    $strStrictUids = implode(',', $strictUids);
+		    $where .= '(tx_sksimplegallery_galleries.uid IN (' . ($strStrictUids?$strStrictUids:0) . ') OR tx_sksimplegallery_galleries.sys_language_uid=-1)';
+		} else
+		    $where .= 'tx_sksimplegallery_galleries.sys_language_uid IN (0,-1)';
+		$where .= ' AND deleted = 0 AND hidden = 0';
+        $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_sksimplegallery_galleries', $where.' AND uid='.intval($this->piVars['id']));
+        if(!$GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
 			return "no data for this view";
 			break;
 		}
-        $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); 
+        $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+        // get the translated record if the content language is not the default language
+        if ($GLOBALS['TSFE']->sys_language_content) {
+			$OLmode = ($this->sys_language_mode == 'strict'?'hideNonTranslated':'');
+			$row = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tx_sksimplegallery_galleries', $row, $GLOBALS['TSFE']->sys_language_content, $OLmode);
+        }
         $thumb_ids=explode(',',$row['pictures']); 
         $count=count($thumb_ids);
         
@@ -279,16 +331,48 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 
 		$this->caption='';
 		for($i=$start;$i<$end;$i++) {
+			$where = '';
+			if ($this->sys_language_mode == 'strict' && $GLOBALS['TSFE']->sys_language_content) {
+			    $tmpres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('tx_sksimplegallery_pictures.l18n_parent', 'tx_sksimplegallery_pictures', 'tx_sksimplegallery_pictures.sys_language_uid = '.$GLOBALS['TSFE']->sys_language_content.$this->enableFields);
+				$strictUids = array();
+			    while ($tmprow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($tmpres)) {
+			        $strictUids[] = $tmprow['l18n_parent'];
+			    }
+			    $strStrictUids = implode(',', $strictUids);
+			    $where .= '(tx_sksimplegallery_pictures.uid IN (' . ($strStrictUids?$strStrictUids:0) . ') OR tx_sksimplegallery_pictures.sys_language_uid=-1)';
+			} else
+			    $where .= 'tx_sksimplegallery_pictures.sys_language_uid IN (0,-1)';
+			$where .= ' AND uid='.intval($thumb_ids[$i]).' and hidden=0 and deleted=0';
 			$query = $GLOBALS['TYPO3_DB']->SELECTquery(
                 '*',         // SELECT ...
                 'tx_sksimplegallery_pictures',     // FROM ...
-                'uid='.$thumb_ids[$i].' and hidden=0 and deleted=0',    // WHERE...
+                $where,    // WHERE...
                 '',            // GROUP BY...
                 '',    // ORDER BY...
                 ''            // LIMIT ...
             );
 			$res = $GLOBALS['TYPO3_DB']->sql(TYPO3_db, $query);
-			$thumb = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			// already localized picture
+			if (!$GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
+				$query = $GLOBALS['TYPO3_DB']->SELECTquery(
+			   			'*',	// SELECT ...
+						'tx_sksimplegallery_pictures',     // FROM ...
+						'uid = ' . intval($thumb_ids[$i]) . ' AND deleted = 0 AND hidden = 0',
+						'',		// GROUP BY...
+						'',		// ORDER BY...
+						''		// LIMIT ...
+						);
+				$res = $GLOBALS['TYPO3_DB']->sql(TYPO3_db, $query);
+				$thumb = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			} else {
+				$thumb = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				// get the translated record if the content language is not the default language
+				if ($GLOBALS['TSFE']->sys_language_content) {
+					$OLmode = ($this->sys_language_mode == 'strict'?'hideNonTranslated':'');
+					$thumb = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tx_sksimplegallery_pictures', $thumb, $GLOBALS['TSFE']->sys_language_content, $OLmode);
+				}
+			}	
+            
 			if($thumb) {
 			    $this->conf['thumbView.']['file']=$this->uploaddir.$thumb['picture'];
 			    $this->conf['thumbView.']['params'] = $this->pi_classParam('image');
@@ -296,10 +380,10 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			    $this->conf['thumbView.']['titleText'] = $thumb['title'];
 			    $this->conf['thumbView.']['caption'] = $thumb['description'] ? strip_tags($thumb['description']) : $thumb[$this->config['popupAltDescriptionField']];
 			    $this->caption.=$thumb['title']."\n";
-			    $ext=strtolower(substr($thumb['picture'],strrpos($thumb['picture'],'.')+1));
+			    
                 //retrieve EXIF Data
                 $markerArray['###EXIF###']='';
-                if(!$this->conf['donotreadEXIF'] && $ext!='pdf') {
+                if(!$this->conf['donotreadEXIF']) {
                     $exif = $this->getExifData($this->uploaddir.$thumb['picture']);
                     $markerArray['###EXIF###']=is_array($exif) ? $this->cObj->stdWrap($this->infoExifDiv($exif),$this->conf['exifData.']) : ''; 
                 }
@@ -313,28 +397,19 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 				    $markerArray['###THUMB###']=$this->pi_linkTP_keepPIvars($markerArray['###THUMB###'],array('id'=>$this->piVars['id'],'backpid'=>$this->piVars['backpid'],'page'=>$this->piVars['page'],'single'=>$thumb['uid']),1,1,$GLOBALS["TSFE"]->id);
 			    }
                 
-                $markerArray['###THUMBTITLE###']=$this->cObj->stdWrap($thumb['title'],$this->conf['single.']['thumbTitle_stdWrap.']);   
+                $markerArray['###THUMBTITLE###']=$thumb['title'];
 			    if($this->conf['activateEcards']==1) {  
                     $linkWrapArray['###ECARDLINK###']=explode('|',$this->pi_linkToPage('|',$this->conf['eCards.']['viewPID'],'',array($this->prefixId.'[newecard]'=>$thumb['uid'],$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id)));   
                 } else {
                     $subpartArray['###ECARDLINK###']='';
                 }
-                
-                //download
-                if($this->conf['activateDownloads']==1) {  
-                    $linkWrapArray['###DOWNLOADLINK###']=explode('|',$this->pi_linkToPage('|',$GLOBALS['TSFE']->id,'_blank',array($this->prefixId.'[download]'=>$thumb['uid'])));   
-                } else {
-                    $subpartArray['###DOWNLOADLINK###']='';
-                }
-                
                 // Adds hook for processing of extra item markers
 		        if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'])) {
 			        foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'] as $_classRef) {
 				        $_procObj = & t3lib_div::getUserObj($_classRef);
 				        $markerArray = $_procObj->extraSingleMarkerProcessor($markerArray, $thumb, $this);
-			        }          
+			        }
 		        }
-                
 			    $innercontent.=$this->cObj->substituteMarkerArrayCached($template['item'], $markerArray,$subpartArray,$linkWrapArray);
                 
 			    if($thumb_ids[$i]==$this->piVars['single']) {
@@ -391,6 +466,9 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 						// marker: pictureXofY
 				      $single['NumberOfCurrentPicture'] = $i+1;
 				      $single['TotalNumberOfPictures' ] = $end;
+					  $single['Picture'] = $this->pi_getLL('pi_list_browseresults_picture');
+					  $single['Of'] = $this->pi_getLL('pi_list_browseresults_of');
+                      
 
 						// marker: set Link to the thumbnails page
 						$link_param = array();
@@ -404,8 +482,8 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			}
 		}
 		
-		$this->cObj->setCurrentVal($row['title']);
-		$markerArray['###TITLE###']=$this->cObj->stdWrap($row['title'],$this->conf['single.']['title_stdWrap.']);
+		
+		$markerArray['###TITLE###']=$row['title'];
 		$markerArray['###DESCRIPTION###']=$this->pi_RTEcssText($row['description']);
         if($this->conf['activateEcards']==1) {
             $linkWrapArray['###ECARDSINGLELINK###']=explode('|',$this->pi_linkToPage('|',$this->conf['eCards.']['viewPID'],'',array($this->prefixId.'[newecard]'=>$single['uid'],$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id,$this->prefixId.'[single]'=>$this->piVars['single'])));   
@@ -420,8 +498,8 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'])) {
 			foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'] as $_classRef) {
 				$_procObj = & t3lib_div::getUserObj($_classRef);
-				$markerArray = $_procObj->extraSingleMarkerProcessor($markerArray, $single, $this);
-			}     
+				$markerArray = $_procObj->extraSingleMarkerProcessor($markerArray, $thumb, $this);
+			}
 		}
         
 		if(count($single)>0) {
@@ -434,8 +512,8 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
             
             $markerArray['###SINGLEPICTURE###']=$this->ImageMarker($this->conf['singleView.'], $this->conf['thumbMode']);      
             
-            $this->cObj->setCurrentVal($single['title']);
-			$markerArray['###SINGLETITLE###']=$this->cObj->stdWrap($single['title'],$this->conf['single.']['title_stdWrap.']);
+            
+			$markerArray['###SINGLETITLE###']=$single['title'];
 			$markerArray['###SINGLEDESCRIPTION###']=$this->pi_RTEcssText($single['description']);
 			$singlecontent.=$this->cObj->substituteMarkerArrayCached($template['single'], $markerArray,array(),$subpartArray);
             
@@ -445,6 +523,8 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 
 			$markerArray['###SINGLE_NUMBER_OF_CURENT_PICTURE###'] = $single['NumberOfCurrentPicture'];
 			$markerArray['###SINGLE_TOTAL_NUMBER_OF_PICTURES###'] = $single['TotalNumberOfPictures' ];
+			$markerArray['###PICTURE###'                        ] = $single['Picture'];
+			$markerArray['###OF###'                             ] = $single['Of'];
             
             
 		} 
@@ -774,15 +854,11 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
         
         return $d;
     }
-    
-    
-    
 }
-
-
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sk_simplegallery/pi1/class.tx_sksimplegallery_pi1.php'])	{
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sk_simplegallery/pi1/class.tx_sksimplegallery_pi1.php']);
 }
 
 ?>
+
