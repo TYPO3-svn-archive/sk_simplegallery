@@ -119,6 +119,7 @@ $TCA["tx_sksimplegallery_pictures"] = Array (
 		),
 		"picture" => Array (		
 			"exclude" => 0,		
+            "l10n_mode" => 'exclude',
 			"label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_pictures.picture",		
 			"config" => Array (
 				"type" => "group",
@@ -133,7 +134,8 @@ $TCA["tx_sksimplegallery_pictures"] = Array (
 			)
 		),
         "downloads" => Array (        
-        "exclude" => 1,        
+        "exclude" => 1,
+        "l10n_mode" => 'exclude',        
         "label" => "LLL:EXT:ddd/locallang_db.xml:tx_sksimplegallery_pictures.downloads",        
         "config" => Array (
             "type"     => "input",
@@ -279,6 +281,7 @@ $TCA["tx_sksimplegallery_galleries"] = Array (
 		),
 		"pictures" => Array (		
 			"exclude" => 0,		
+            "l10n_mode" => 'exclude',
 			"label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_galleries.pictures",		
 			"config" => Array (
 				"type" => "group",	
@@ -291,6 +294,7 @@ $TCA["tx_sksimplegallery_galleries"] = Array (
 		),
 		"galpicture" => Array (		
 			"exclude" => 0,		
+            "l10n_mode" => 'exclude',
 			"label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_galleries.galpicture",		
 			"config" => Array (
 				"type" => "group",
@@ -304,6 +308,7 @@ $TCA["tx_sksimplegallery_galleries"] = Array (
 		),
         "altgalpicture" => Array (		
 			"exclude" => 0,		
+            "l10n_mode" => 'exclude',
 			"label" => "LLL:EXT:sk_simplegallery/locallang_db.xml:tx_sksimplegallery_galleries.altgalpicture",		
 			"config" => Array (
 				"type" => "group",

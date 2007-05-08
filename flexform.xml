@@ -30,6 +30,10 @@
 				        <numIndex index="0">LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_view_input.eCard</numIndex>
 				        <numIndex index="1">ECARD</numIndex>
 				        </numIndex>
+                        <numIndex index="3">
+				        <numIndex index="0">LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_view_input.teaser</numIndex>
+				        <numIndex index="1">TEASER</numIndex>
+				        </numIndex>
 			        </items>
 		        </config>
 	        </TCEforms>
@@ -284,6 +288,109 @@
   	</ROOT>
 	</sSingle>
 	
+    <sTEASER>
+		<ROOT>
+	        <TCEforms>
+	            <sheetTitle>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser</sheetTitle>
+	        </TCEforms>
+	        <type>array</type>
+	        <el> 
+                <teaserCount>
+                    <TCEforms>
+                        <label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.count</label>
+                        <config>
+                            <type>input</type>
+                            <size>3</size>
+                            <max>3</max>
+                            <eval>trim</eval>
+                        </config>
+                    </TCEforms>
+                </teaserCount>
+                
+                <teaser_maxW>
+		  	        <TCEforms>
+				        <label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.maxW</label>
+				        <config>
+					        <type>input</type>
+					        <size>3</size>
+					        <max>3</max>
+					        <eval>trim</eval>
+				        </config>
+			        </TCEforms>
+		        </teaser_maxW>
+		  
+		        <teaser_maxH>
+		  	        <TCEforms>
+				        <label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.maxH</label>
+				        <config>
+					        <type>input</type>
+					        <size>3</size>
+					        <max>3</max>
+					        <eval>trim</eval>
+				        </config>
+			        </TCEforms>
+		        </teaser_maxH>
+		          
+		        <teaser_W>
+		  	        <TCEforms>
+				        <label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.width</label>
+				        <config>
+					        <type>input</type>
+					        <size>8</size>
+					        <max>9</max>
+					        <eval>trim</eval>
+				        </config>
+			        </TCEforms>
+		         </teaser_W>
+		          
+		         <teaser_H>
+		  	        <TCEforms>
+				        <label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.height</label>
+				        <config>
+					        <type>input</type>
+					        <size>8</size>
+					        <max>9</max>
+					        <eval>trim</eval>
+				        </config>
+			        </TCEforms>
+		         </teaser_H>
+          
+                <teaser_order>
+                    <TCEforms>
+	                    <label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.order</label>
+	                    <config>
+		                    <type>select</type>
+		                    <items>
+			                    <numIndex index="0">
+			                    <numIndex index="0">LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.order.crdate</numIndex>
+			                    <numIndex index="1">crdate desc</numIndex>
+			                    </numIndex>
+			                    <numIndex index="1">
+			                    <numIndex index="0">LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.order.random</numIndex>
+			                    <numIndex index="1">RAND()</numIndex>
+			                    </numIndex>
+		                    </items>
+	                    </config>
+                    </TCEforms>
+                </teaser_order>
+                <teaserTargetPID>
+                    <TCEforms>
+                        <exclude>1</exclude>
+                        <label>LLL:EXT:sk_simplegallery/pi1/locallang.php:ff_viewTeaser.teaserTargetPID</label>
+                        <config>
+                            <type>group</type>
+                            <internal_type>db</internal_type>
+                            <allowed>pages</allowed>
+                            <size>1</size>
+                            <maxitems>1</maxitems>
+                            <minitems>0</minitems>
+                            <show_thumbs>1</show_thumbs>
+                        </config>
+                    </TCEforms>
+                </teaserTargetPID>
+            </el>
+  	    </ROOT>
+	</sTEASER>
   </sheets>
 </T3DataStructure>
 

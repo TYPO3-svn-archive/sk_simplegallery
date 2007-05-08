@@ -54,6 +54,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		$this->pi_loadLL();
 		$this->uploaddir = 'uploads/tx_sksimplegallery/';
 		
+        
         if($this->conf['debug']) debug($this->piVars);
 		// sys_language_mode defines what to do if the requested translation is not found
 		$this->sys_language_mode = $this->conf['sys_language_mode']?$this->conf['sys_language_mode'] : $GLOBALS['TSFE']->sys_language_mode;
@@ -124,6 +125,29 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
         $tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'eCards', 'sSingle');
 		if($tmp!='') $this->conf['activateEcards']=$tmp;
         
+        //teaser view
+		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'teaser_maxW', 'sTEASER');
+		if($tmp!='') $this->conf['teaserView.']['file.']['maxW']=$tmp;
+		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'teaser_maxH', 'sTEASER');
+		if($tmp!='') $this->conf['teaserView.']['file.']['maxH']=$tmp;
+		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'teaser_W', 'sTEASER');
+		if($tmp!='') {
+			$this->conf['teaserView.']['file.']['maxW']='';
+			$this->conf['teaserView.']['file.']['width']=$tmp;
+		}
+		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'teaser_H', 'sTEASER');
+		if($tmp!='') {
+			$this->conf['teaserView.']['file.']['maxH']='';
+			$this->conf['thumbView.']['file.']['height']=$tmp;
+		}
+		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'teaserCount', 'sTEASER');
+		if($tmp!='') $this->conf['teaserViewCount']=$tmp;
+		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'teaser_order', 'sTEASER');
+		if($tmp!='') $this->conf['teaserViewSortBy']=$tmp;
+		$tmp=$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'teaserTargetPID', 'sTEASER');
+		if($tmp!='') $this->conf['teaserViewTarget']=$tmp;
+		
+        
         //which layout ?
         $this->conf['singleLayout']=intval($this->conf['singleLayout']);
         
@@ -142,6 +166,9 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 				break;
 			case 'SINGLE':
 				$content=$this->SingleGallery();
+				break;
+            case 'TEASER':
+				$content=$this->Teaser();
 				break;
             case 'ECARD':
                 $content=$this->eCards();
@@ -214,7 +241,10 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 			$markerArray['###TITLE###']=$temp['title'];
 			$cache = 1;
     		$this->pi_USER_INT_obj = 0;
-			$subpartArray['###LINK_ITEM###']= explode('|',$this->pi_linkTP('|',$urlParameters=array($this->prefixId.'[id]'=>$temp['uid'],$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id),$cache,$altPageId=$this->conf['singlePID']));
+			if($this->conf['linkSingleDirect']==1) 
+                $subpartArray['###LINK_ITEM###']= explode('|',$this->pi_linkTP('|',$urlParameters=array($this->prefixId.'[id]'=>$temp['uid'],$this->prefixId.'[single]'=>$this->getFirstPicture($temp['uid']),$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id),$cache,$altPageId=$this->conf['singlePID']));
+            else
+			    $subpartArray['###LINK_ITEM###']= explode('|',$this->pi_linkTP('|',$urlParameters=array($this->prefixId.'[id]'=>$temp['uid'],$this->prefixId.'[backpid]'=>$GLOBALS["TSFE"]->id),$cache,$altPageId=$this->conf['singlePID']));
 			$innercontent.=$this->cObj->substituteMarkerArrayCached($template['item'], $markerArray,array(),$subpartArray);
 		}
         $markerArray=array();
@@ -271,6 +301,63 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 	       }
 	       return $row['picture'];
 	   }
+    }
+    
+    function Teaser() {
+        $template['total'] = $this->cObj->getSubpart($this->template,'###TEASERVIEW###');
+		$template['item'] = $this->cObj->getSubpart($template['total'],'###THUMBLIST###');
+        
+        #get pictures from galleries
+        $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery(
+            '*',
+            'tx_sksimplegallery_galleries',
+            'hidden=0 and deleted=0 and pid IN('.$this->pidList.')');
+        while($row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+            $pics.=$row['pictures']!=''?$row['pictures'].',':'';
+        } 
+        $pics=substr($pics,0,strlen($pics)-1);
+        if ($this->sys_language_mode == 'strict' && $GLOBALS['TSFE']->sys_language_content) {
+			$tmpres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('tx_sksimplegallery_pictures.l18n_parent', 'tx_sksimplegallery_pictures', 'tx_sksimplegallery_pictures.sys_language_uid = '.$GLOBALS['TSFE']->sys_language_content.$this->enableFields);
+			$strictUids = array();
+			while ($tmprow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($tmpres)) {
+			    $strictUids[] = $tmprow['l18n_parent'];
+			}
+			$strStrictUids = implode(',', $strictUids);
+			$where .= '(tx_sksimplegallery_pictures.uid IN (' . ($strStrictUids?$strStrictUids:0) . ') OR tx_sksimplegallery_pictures.sys_language_uid=-1)';
+		} else
+			$where .= 'tx_sksimplegallery_pictures.sys_language_uid IN (0,-1)';
+            
+        $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery(
+            '*',
+            'tx_sksimplegallery_pictures',
+            $where.' AND hidden=0 AND deleted=0 AND pid IN('.$this->pidList.') AND uid IN('.$pics.')',
+            '',$orderBy=$this->conf['teaserViewSortBy'],
+            $limit=$this->conf['teaserViewCount']); 
+        
+        while($row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+            //find gallery with the pic
+            $gres=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_galleries','FIND_IN_SET('.$row['uid'].',pictures)>0');
+            $gal=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($gres);
+            $thumbView=$this->conf['teaserView.'];  
+            $thumbView['file']=$this->uploaddir.$row['picture'];
+            
+			$thumbView['params'] = $this->pi_classParam('image');
+			$thumbView['altText'] = $row['title'];
+			$thumbView['titleText'] = $row['title'];
+			$thumbView['caption'] = $row['description'] ? strip_tags($row['description']) : $row[$this->config['popupAltDescriptionField']];
+			$this->caption.=$row['title']."\n";
+           #t3lib_div::debug($thumbView);     
+            $markerArray['###THUMB###']=$this->ImageMarker($thumbView);
+            $markerArray['###THUMBTITLE###']=$row['title'];
+            $linkWrapArray['###LINK###']=explode('|',$this->pi_linkTP('|',array(
+                $this->prefixId.'[id]'=>$gal['uid'],
+                $this->prefixId.'[single]'=>$row['uid'],
+            ),1,$this->conf['teaserViewTarget']));
+            $innercontent.=$this->cObj->substituteMarkerArrayCached($template['item'], $markerArray,$subpartArray,$linkWrapArray);                 
+        }
+        $subpartArray['###THUMBLIST###']=$innercontent;
+        
+        return $this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,$linkWrapArray); ;
     }
     
 	function SingleGallery() {
@@ -861,4 +948,3 @@ if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/sk_simp
 }
 
 ?>
-

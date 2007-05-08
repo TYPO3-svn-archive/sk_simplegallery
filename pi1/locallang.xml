@@ -10,7 +10,8 @@
 			<label index="ff_view_input">View</label>
 			<label index="ff_view_input.list">Galleries</label>
             <label index="ff_view_input.single">Single Gallery</label>
-			<label index="ff_view_input.eCard">eCards</label>
+            <label index="ff_view_input.eCard">eCards</label>
+			<label index="ff_view_input.teaser">Picture Teaser</label>
 			<label index="ff_view_input.template_file">Template File</label>
 			<label index="ff_view_input.gal_effects">Effects</label>
             
@@ -25,6 +26,17 @@
             <label index="ff_viewSingle.clickmode">open Pictures direct in PopUp</label>
 			<label index="ff_viewSingle.singleLayout">alternative Single Layout</label>
 			
+            <label index="ff_viewTeaser">Teaser View</label>  
+            <label index="ff_viewTeaser.count">Picture count</label>  
+            <label index="ff_viewTeaser.maxW">max. Width</label>
+			<label index="ff_viewTeaser.maxH">max. Height</label>
+			<label index="ff_viewTeaser.width">abs. Width</label>
+            <label index="ff_viewTeaser.height">abs. Height</label>
+            <label index="ff_viewTeaser.teaserTargetPID">target page</label>
+            <label index="ff_viewTeaser.order">sort by</label>
+            <label index="ff_viewTeaser.order.crdate">creation date</label>
+			<label index="ff_viewTeaser.order.random">random</label>
+            
 			<label index="ff_viewSingle.maxW">max. Width for Single Picture</label>
 			<label index="ff_viewSingle.maxH">max. Height for Single Picture</label>
             <label index="ff_viewSingle.singleID">ID of Galery</label> 
@@ -86,6 +98,7 @@
 			<label index="ff_view_input.list">Galerien</label>
             <label index="ff_view_input.single">Einzelgalerie</label>
 			<label index="ff_view_input.eCards">eCards (Grusskarten)</label>
+            <label index="ff_view_input.teaser">Bilder Teaser</label> 
 			<label index="ff_view_input.template_file">Template Datei</label>
 			<label index="ff_view_input.gal_effects">Effekte</label>
             
@@ -106,6 +119,17 @@
             <label index="ff_viewSingle.ecard">aktiviere eCards</label>   
             <label index="ff_viewSingle.downloads">aktiviere Downloads</label> 
 			
+            <label index="ff_viewTeaser">Bilder Teaser</label>  
+            <label index="ff_viewTeaser.count">Anzahl der Bilder</label>  
+            <label index="ff_viewTeaser.maxW">max. Breite</label>
+			<label index="ff_viewTeaser.maxH">max. Höhe</label>
+			<label index="ff_viewTeaser.width">abs. Breite</label>
+            <label index="ff_viewTeaser.height">abs. Höhe</label>
+            <label index="ff_viewTeaser.teaserTargetPID">Zielseite</label>
+            <label index="ff_viewTeaser.order">Sortierung</label>
+            <label index="ff_viewTeaser.order.crdate">Erstellungsdatum</label>
+			<label index="ff_viewTeaser.order.random">zufällig</label>
+            
 			<label index="back">zurück</label>
 			<label index="submit_button_label">Click here to submit value</label>
             
