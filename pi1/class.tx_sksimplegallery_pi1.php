@@ -253,6 +253,13 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		return $this->cObj->substituteMarkerArrayCached($template['total'], $markerArray,$subpartArray,array());
 	}
 	
+    function getFirstPicture($gal) {
+        $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_galleries','uid='.$gal);
+        $row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+        $p=$row['pictures']!='' ? explode($row['pictures']) : array(0);
+        return $p[0]; 
+    }
+    
     function getGalpicture($uid) {
        $where = '';
        if ($this->sys_language_mode == 'strict' && $GLOBALS['TSFE']->sys_language_content) {
