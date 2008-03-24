@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2006 Steffen Kamper <steffen@dislabs.de>
+*  (c) 2006 Steffen Kamper <info@sk-typo3.de>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,7 +24,7 @@
 /**
  * Plugin 'Simple Gallery' for the 'sk_simplegallery' extension.
  *
- * @author	Steffen Kamper <steffen@dislabs.de>
+ * @author	Steffen Kamper <info@sk-typo3.de>
  */
 
 
@@ -64,7 +64,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		
 		//Flexform Values
 		//view
-		$this->conf['view'] = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'view_input', 'sVIEW');
+		$this->conf['view'] = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'style_select', 'sVIEW');
 		
 		#echo "VIEW: ".$this->conf['view'];
 		$templateFile = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'template_file', 'sVIEW');
@@ -256,7 +256,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
     function getFirstPicture($gal) {
         $res=$GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_sksimplegallery_galleries','uid='.$gal);
         $row=$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-        $p=$row['pictures']!='' ? explode($row['pictures']) : array(0);
+        $p=$row['pictures']!='' ? explode(',',$row['pictures']) : array(0);
         return $p[0]; 
     }
     
@@ -592,7 +592,7 @@ class tx_sksimplegallery_pi1 extends tslib_pibase {
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'])) {
 			foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sk_simplegallery']['extraSingleMarkerHook'] as $_classRef) {
 				$_procObj = & t3lib_div::getUserObj($_classRef);
-				$markerArray = $_procObj->extraSingleMarkerProcessor($markerArray, $thumb, $this);
+				$markerArray = $_procObj->extraSingleMarkerProcessor($markerArray, $single, $this);
 			}
 		}
         
